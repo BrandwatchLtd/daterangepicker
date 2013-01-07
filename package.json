@@ -1,0 +1,27 @@
+{
+  "name": "daterangepicker",
+  "description": "Lightweight Date range picker",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/BrandwatchLtd/daterangepicker.git"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/mit-license.php"
+    }
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "serve": "*",
+    "mocha": "~1.7.4"
+  },
+  "optionalDependencies": {},
+  "volo": {
+    "dependencies": {
+      "jquery": "jquery/jquery",
+      "underscore": "documentcloud/underscore"
+    }
+  }
+}
