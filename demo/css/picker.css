@@ -12,6 +12,7 @@
     }
 td.day {
     text-align:center;
+    cursor: pointer;
 }
     td.day.selected{
         background-color:#AAA;

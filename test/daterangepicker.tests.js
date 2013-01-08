@@ -95,6 +95,25 @@ define(['lib/daterangepicker/daterangepicker'],
                     calendar.$el.find('td.day.selected').click();
                 });
 
+                it('changes the day td with the selected class when a day is clicked', function(){
+                    var newDate = calendar.$el.find('.day[data-date="2012-12-01"]');
+
+                    newDate.click();
+
+                    expect(newDate.hasClass('selected')).toEqual(true);
+                    expect(calendar.$el.find('.selected').length).toEqual(1);
+                });
+
+                it('updates this.selectedDate when a day is clicked', function(){
+                    var newDate = calendar.$el.find('.day[data-date="2012-12-01"]');
+
+                    newDate.click();
+
+                    expect(calendar.selectedDate.year()).toEqual(2012);
+                    expect(calendar.selectedDate.month()).toEqual(11);
+                    expect(calendar.selectedDate.date()).toEqual(1);
+                });
+
                 it('updates this.selectedMonth when next is clicked', function(){
                     calendar.$el.find('.next').click();
 
