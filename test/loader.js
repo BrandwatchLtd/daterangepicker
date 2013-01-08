@@ -4,7 +4,8 @@ require.config({
         'daterangepicker': '../',
         'jquery': 'test/lib/jquery-1.7.1',
         'underscore': 'test/lib/underscore',
-        'moment': 'test/lib/moment'
+        'moment': 'test/lib/moment',
+        'mustache': 'test/lib/mustache'
     }
 });
 mocha.setup({
