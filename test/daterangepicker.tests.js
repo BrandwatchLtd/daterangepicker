@@ -19,29 +19,38 @@ define(['lib/daterangepicker/daterangepicker'],
                 calendar = picker.createCalendar(11, 2012, '2012-12-25', 'myCalendar');
             });
 
-            it('stores the selected date', function(){
-                expect(calendar.selectedDate).toEqual(moment([2012,11,25]));
-            });
-
-            it('stores the selected month', function(){
-                expect(calendar.selectedMonth).toEqual(moment([2012,11,1]));
+            afterEach(function(){
+                calendar.destroy();
+                calendar = undefined;
             });
 
             it('calculates the start date as the first monday', function(){
-                expect(calendar.startDate.year()).toEqual(2012);
-                expect(calendar.startDate.month()).toEqual(10);
-                expect(calendar.startDate.date()).toEqual(26);
-                expect(calendar.startDate.day()).toEqual(1);
+                var startDate = calendar._getStartDate();
+
+                expect(startDate.year()).toEqual(2012);
+                expect(startDate.month()).toEqual(10);
+                expect(startDate.date()).toEqual(26);
+                expect(startDate.day()).toEqual(1);
             });
 
-            it('sets this.$el to be an empty div', function(){
-                expect(calendar.$el).toBeDefined();
-                expect(calendar.$el.is('div')).toEqual(true);
-                expect(calendar.$el.children().length).toEqual(0);
-            });
+            describe('initialization', function(){
+                it('stores the selected date', function(){
+                    expect(calendar.selectedDate).toEqual(moment([2012,11,25]));
+                });
 
-            it('sets the className of this.$el', function(){
-                expect(calendar.$el.hasClass('myCalendar')).toEqual(true);
+                it('stores the selected month', function(){
+                    expect(calendar.selectedMonth).toEqual(moment([2012,11,1]));
+                });
+
+                it('sets this.$el to be an empty div', function(){
+                    expect(calendar.$el).toBeDefined();
+                    expect(calendar.$el.is('div')).toEqual(true);
+                    expect(calendar.$el.children().length).toEqual(0);
+                });
+
+                it('sets the className of this.$el', function(){
+                    expect(calendar.$el.hasClass('myCalendar')).toEqual(true);
+                });
             });
 
             describe('rendering', function(){
@@ -59,6 +68,62 @@ define(['lib/daterangepicker/daterangepicker'],
 
                 it('adds the date to the day cells as "data-date"', function(){
                     expect(calendar.$el.find('td.day').first().data('date')).toEqual('2012-11-26');
+                });
+
+                it('adds a class of "grey" to the days not in the current month', function(){
+                    expect(calendar.$el.find('td.day.grey').length).toEqual(11);
+                });
+
+                it('adds a class of "selected" to the selected date', function(){
+                    expect(calendar.$el.find('td.day.selected').length).toEqual(1);
+                    expect(calendar.$el.find('td.day.selected').data('date')).toEqual('2012-12-25');
+                });
+            });
+
+            describe('events', function(){
+                beforeEach(function(){
+                    calendar.render();
+                });
+
+                it('triggers an onDayClicked event with the date clicked when a day is clicked', function(done){
+                    calendar.bind('onDayClicked', function(args){
+                        expect(args).toBeDefined();
+                        expect(args.date).toEqual('2012-12-25');
+
+                        done();
+                    });
+
+                    calendar.$el.find('td.day.selected').click();
+                });
+
+                it('updates this.selectedMonth when next is clicked', function(){
+                    calendar.$el.find('.next').click();
+
+                    expect(calendar.selectedMonth.month()).toEqual(0);
+                    expect(calendar.selectedMonth.year()).toEqual(2013);
+                });
+
+                it('re-renders when next is clicked', function(){
+                    var renderStub = sinon.stub(calendar, 'render');
+
+                    calendar.$el.find('.next').click();
+
+                    expect(renderStub.calledOnce).toEqual(true);
+                });
+
+                it('updates this.selectedMonth when previous is clicked', function(){
+                    calendar.$el.find('.prev').click();
+
+                    expect(calendar.selectedMonth.month()).toEqual(10);
+                    expect(calendar.selectedMonth.year()).toEqual(2012);
+                });
+
+                it('re-renders when previous is clicked', function(){
+                    var renderStub = sinon.stub(calendar, 'render');
+
+                    calendar.$el.find('.prev').click();
+
+                    expect(renderStub.calledOnce).toEqual(true);
                 });
             });
         });
