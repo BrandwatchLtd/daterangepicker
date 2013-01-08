@@ -16,12 +16,7 @@ define(['lib/daterangepicker/daterangepicker'],
 
             beforeEach(function(){
                 picker = daterangepicker.create();
-                calendar = picker.createCalendar(11, 2012, '2012-12-25', 'myCalendar');
-            });
-
-            afterEach(function(){
-                calendar.destroy();
-                calendar = undefined;
+                calendar = picker._createCalendar(11, 2012, '2012-12-25', 'myCalendar');
             });
 
             it('calculates the start date as the first monday', function(){
@@ -78,6 +73,10 @@ define(['lib/daterangepicker/daterangepicker'],
                     expect(calendar.$el.find('td.day.selected').length).toEqual(1);
                     expect(calendar.$el.find('td.day.selected').data('date')).toEqual('2012-12-25');
                 });
+
+                it('renders the month title', function(){
+                    expect(calendar.$el.find('th.month-title').text()).toEqual('December 2012');
+                });
             });
 
             describe('events', function(){
@@ -126,6 +125,98 @@ define(['lib/daterangepicker/daterangepicker'],
                     expect(renderStub.calledOnce).toEqual(true);
                 });
             });
+        });
+
+        describe('a DateRangePicker', function(){
+
+            describe('initialization', function(){
+
+                describe('defaults', function(){
+                    beforeEach(function(){
+                        picker = daterangepicker.create();
+                    });
+
+                    it('creates a calendar for the current month as this.startCalendar', function(){
+                        var now = moment();
+
+                        expect(picker.startCalendar).toBeDefined();
+                        expect(picker.startCalendar.selectedMonth.month()).toEqual(now.month());
+                    });
+
+                    it('creates a calendar for the current month as this.endCalendar', function(){
+                        var now = moment();
+
+                        expect(picker.endCalendar).toBeDefined();
+                        expect(picker.endCalendar.selectedMonth.month()).toEqual(now.month());
+                    });
+
+                    it('uses the current date as the startCalendar\'s selectedDate', function(){
+                        var now = moment();
+
+                        expect(picker.startCalendar.selectedDate.year()).toEqual(now.year());
+                        expect(picker.startCalendar.selectedDate.month()).toEqual(now.month());
+                        expect(picker.startCalendar.selectedDate.date()).toEqual(now.date());
+                    });
+
+                    it('uses the current date as the endCalendar\'s selectedDate', function(){
+                        var now = moment();
+
+                        expect(picker.endCalendar.selectedDate.year()).toEqual(now.year());
+                        expect(picker.endCalendar.selectedDate.month()).toEqual(now.month());
+                        expect(picker.endCalendar.selectedDate.date()).toEqual(now.date());
+                    });
+                });
+
+            });
+
+            describe('rendering', function(){
+                var startCalendarRenderSpy,
+                    endCalendarRenderSpy;
+
+                beforeEach(function(){
+                    picker = daterangepicker.create();
+
+                    startCalendarRenderSpy = sinon.spy(picker.startCalendar, 'render');
+                    endCalendarRenderSpy = sinon.spy(picker.endCalendar, 'render');
+
+                    picker.render();
+                });
+
+                afterEach(function(){
+                    startCalendarRenderSpy = undefined;
+                    endCalendarRenderSpy = undefined;
+                });
+
+                it('renders the startCalendar into this.$el', function(){
+                    expect(startCalendarRenderSpy.calledOnce).toEqual(true);
+                    expect(picker.startCalendar.$el.parent().is(picker.$el)).toEqual(true);
+                });
+
+                it('renders the endCalendar into this.$el', function(){
+                    expect(endCalendarRenderSpy.calledOnce).toEqual(true);
+                    expect(picker.endCalendar.$el.parent().is(picker.$el)).toEqual(true);
+                });
+            });
+
+            describe('events', function(){
+                beforeEach(function(){
+                    picker = daterangepicker.create();
+                    picker.render();
+                });
+
+                it('updates this.startDate when this.startCalendar emits an onDayClicked event', function(){
+                    picker.startCalendar.trigger('onDayClicked', { date: '2012-12-01' });
+
+                    expect(picker.startDate).toEqual('2012-12-01');
+                });
+
+                it('updates this.endDate when this.endCalendar emits an onDayClicked event', function(){
+                    picker.endCalendar.trigger('onDayClicked', { date: '2013-01-01' });
+
+                    expect(picker.endDate).toEqual('2013-01-01');
+                });
+            });
+
         });
 
     });
