@@ -1,0 +1,23 @@
+.picker {
+    border: solid 1px #AAA;
+    overflow:auto;
+    position:relative;
+}
+    .picker th{
+        padding: 0 0.25em;
+    }
+    .picker .calendar {
+        float: left;
+        margin: 10px;
+    }
+td.day {
+    text-align:center;
+}
+    td.day.selected{
+        background-color:#AAA;
+        color:#FFF;
+        border-radius:2px;
+    }
+td.grey{
+    color: #CCC;
+}

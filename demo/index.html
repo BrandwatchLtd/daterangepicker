@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>DateRangePicker demos</title>
+        <link href="css/bootstrap.css" type="text/css" rel="stylesheet" />
+        <link href="css/picker.css" type="text/css" rel="stylesheet" />
+
+        <script src="lib/jquery-1.7.1.js"></script>
+        <script src="lib/underscore.js"></script>
+        <script src="lib/moment.js"></script>
+        <script src="lib/mustache.js"></script>
+        <script src="/lib/daterangepicker/daterangepicker.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <h1>DateRangePicker demo</h1>
+
+            <div id="simple">
+                <h2>Simple</h2>
+                <input id="date1"></input>
+                <div id="picker1"/>
+
+                <script>
+                    var picker = daterangepicker.create();
+                    picker.render();
+
+                    $('#picker1').html(picker.$el);
+                </script>
+            </div>
+        </div>
+    </body>
+</html>
