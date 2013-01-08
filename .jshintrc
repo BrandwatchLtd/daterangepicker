@@ -33,6 +33,7 @@
         "define",
         "require",
         "_",
+        "moment",
         "$",
         "jQuery",
         "before",
