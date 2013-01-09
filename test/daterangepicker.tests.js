@@ -84,8 +84,8 @@ define(['lib/daterangepicker/daterangepicker'],
                     calendar.render();
                 });
 
-                it('triggers an onDayClicked event with the date clicked when a day is clicked', function(done){
-                    calendar.bind('onDayClicked', function(args){
+                it('triggers an onDateSelected event with the date clicked when a day is clicked', function(done){
+                    calendar.bind('onDateSelected', function(args){
                         expect(args).toBeDefined();
                         expect(args.date).toEqual('2012-12-25');
 
@@ -102,6 +102,17 @@ define(['lib/daterangepicker/daterangepicker'],
 
                     expect(newDate.hasClass('selected')).toEqual(true);
                     expect(calendar.$el.find('.selected').length).toEqual(1);
+                });
+
+                it('updates the month if the date clicked is not on this.selectedMonth', function(){
+                    var previousMonthDate = calendar.$el.find('.day[data-date="2012-11-30"]'),
+                        showMonthSpy = sinon.spy(calendar, 'showMonth');
+
+                    previousMonthDate.click();
+
+                    expect(showMonthSpy.calledOnce).toEqual(true);
+                    expect(showMonthSpy.args[0][0]).toEqual(2012);
+                    expect(showMonthSpy.args[0][1]).toEqual(10);
                 });
 
                 it('updates this.selectedDate when a day is clicked', function(){
@@ -142,6 +153,26 @@ define(['lib/daterangepicker/daterangepicker'],
                     calendar.$el.find('.prev').click();
 
                     expect(renderStub.calledOnce).toEqual(true);
+                });
+            });
+
+            describe('showing a month', function(){
+                beforeEach(function(){
+                    calendar.render();
+                });
+
+                it('updates this.selectedMonth', function(){
+                    calendar.showMonth(2010,0);
+
+                    expect(calendar.selectedMonth).toEqual(moment([2010,0]));
+                });
+
+                it('re-renders', function(){
+                    var renderSpy = sinon.spy(calendar, 'render');
+
+                    calendar.showMonth(2010,0);
+
+                    expect(renderSpy.calledOnce).toEqual(true);
                 });
             });
         });
@@ -223,16 +254,16 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.render();
                 });
 
-                it('updates this.startDate when this.startCalendar emits an onDayClicked event', function(){
-                    picker.startCalendar.trigger('onDayClicked', { date: '2012-12-01' });
+                it('changes the this.endCalendar.selectedDate if a later date is clicked on this.startCalendar', function(){
+                    picker.startCalendar.updateSelectedDate('2014-01-01');
 
-                    expect(picker.startDate).toEqual('2012-12-01');
+                    expect(picker.endCalendar.selectedDate.unix()).toEqual(picker.startCalendar.selectedDate.unix());
                 });
 
-                it('updates this.endDate when this.endCalendar emits an onDayClicked event', function(){
-                    picker.endCalendar.trigger('onDayClicked', { date: '2013-01-01' });
+                it('changes the this.startCalendar.selectedDate if an earlier date is clicked on this.endCalendar', function(){
+                    picker.endCalendar.updateSelectedDate('2011-01-01');
 
-                    expect(picker.endDate).toEqual('2013-01-01');
+                    expect(picker.endCalendar.selectedDate.unix()).toEqual(picker.startCalendar.selectedDate.unix());
                 });
             });
 
