@@ -19,6 +19,10 @@ td.day {
         color:#FFF;
         border-radius:2px;
     }
+    td.inRange{
+        background-color:#CCC;
+        color:#FFF;
+    }
 td.grey{
     color: #CCC;
 }

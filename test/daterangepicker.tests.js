@@ -175,6 +175,48 @@ define(['lib/daterangepicker/daterangepicker'],
                     expect(renderSpy.calledOnce).toEqual(true);
                 });
             });
+
+            describe('highlighting cells', function(){
+                beforeEach(function(){
+                    calendar.render();
+                });
+
+                it('highlights from the start to the end of the month if the end date is next month', function(){
+                    var startDate = moment([2012,11,30]),
+                        endDate = moment([2012,0,2]);
+
+                    calendar.highlightCells(startDate, endDate);
+
+                    expect(calendar.$el.find('.inRange').length).toEqual(1);
+                    expect(calendar.$el.find('.inRange').eq(0).data('date')).toEqual('2012-12-31');
+                });
+
+                it('highlights from the end date to the start of the month if the start date is previous month', function(){
+                    var startDate = moment([2012,10,30]),
+                        endDate = moment([2012,11,2]);
+
+                    calendar.highlightCells(startDate, endDate);
+
+                    expect(calendar.$el.find('.inRange').length).toEqual(1);
+                    expect(calendar.$el.find('.inRange').eq(0).data('date')).toEqual('2012-12-01');
+                });
+
+                it('highlights the range if both start and end are in the displayed month', function(){
+                    var startDate = moment([2012,11,24]),
+                        endDate = moment([2012,11,30]);
+
+                    calendar.highlightCells(startDate, endDate);
+
+                    expect(calendar.$el.find('.inRange').length).toEqual(7);
+                    expect(calendar.$el.find('.inRange').eq(0).data('date')).toEqual('2012-12-24');
+                    expect(calendar.$el.find('.inRange').eq(1).data('date')).toEqual('2012-12-25');
+                    expect(calendar.$el.find('.inRange').eq(2).data('date')).toEqual('2012-12-26');
+                    expect(calendar.$el.find('.inRange').eq(3).data('date')).toEqual('2012-12-27');
+                    expect(calendar.$el.find('.inRange').eq(4).data('date')).toEqual('2012-12-28');
+                    expect(calendar.$el.find('.inRange').eq(5).data('date')).toEqual('2012-12-29');
+                    expect(calendar.$el.find('.inRange').eq(6).data('date')).toEqual('2012-12-30');
+                });
+            });
         });
 
         describe('a DateRangePicker', function(){
@@ -250,7 +292,11 @@ define(['lib/daterangepicker/daterangepicker'],
 
             describe('events', function(){
                 beforeEach(function(){
-                    picker = daterangepicker.create();
+                    picker = daterangepicker.create({
+                        startDate: '2012-12-01',
+                        endDate: '2012-12-31',
+                        selectedDate: '2012-12-25'
+                    });
                     picker.render();
                 });
 
@@ -264,6 +310,71 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.endCalendar.updateSelectedDate('2011-01-01');
 
                     expect(picker.endCalendar.selectedDate.unix()).toEqual(picker.startCalendar.selectedDate.unix());
+                });
+
+                it('calls this.highlightRange when the startCalendar raises an onDateSelected event', function(){
+                    var highlightRangeSpy = sinon.spy(picker, 'highlightRange');
+
+                    picker.startCalendar.trigger('onDateSelected', { date: '2012-12-01' });
+
+                    expect(highlightRangeSpy.calledOnce).toEqual(true);
+                    expect(highlightRangeSpy.args[0][0].unix()).toEqual(moment([2012,11,1]).unix());
+                    expect(highlightRangeSpy.args[0][1].unix()).toEqual(picker.getEndDate().unix());
+                });
+
+                it('calls this.highlightRange when the endCalendar raises an onDateSelected event', function(){
+                    var highlightRangeSpy = sinon.spy(picker, 'highlightRange');
+
+                    picker.endCalendar.trigger('onDateSelected', { date: '2012-12-30' });
+
+                    expect(highlightRangeSpy.calledOnce).toEqual(true);
+                    expect(highlightRangeSpy.args[0][0].unix()).toEqual(moment([2012,11,25]).unix());
+                    expect(highlightRangeSpy.args[0][1].unix()).toEqual(moment([2012,11,30]).unix());
+                });
+            });
+
+            describe('highlighting cells', function(){
+                var startCalendarHighlightCellsSpy,
+                    endCalendarHighlightCellsSpy;
+
+                beforeEach(function(){
+                    picker = daterangepicker.create();
+                    picker.render();
+
+                    startCalendarHighlightCellsSpy = sinon.spy(picker.startCalendar, 'highlightCells');
+                    endCalendarHighlightCellsSpy = sinon.spy(picker.endCalendar, 'highlightCells');
+                });
+
+                it('calls this.startCalendar.highlightCells with the correct dates', function(){
+                    var startDate = moment([2012,11,1]),
+                        endDate = moment([2012,11,31]);
+
+                    picker.highlightRange(startDate, endDate);
+
+                    expect(startCalendarHighlightCellsSpy.calledOnce).toEqual(true);
+                    expect(startCalendarHighlightCellsSpy.args[0][0]).toEqual(startDate);
+                    expect(startCalendarHighlightCellsSpy.args[0][1]).toEqual(endDate);
+                });
+
+                it('calls this.endCalendar.highlightCells with the correct dates', function(){
+                    var startDate = moment([2012,11,1]),
+                        endDate = moment([2012,11,31]);
+
+                    picker.highlightRange(startDate, endDate);
+
+                    expect(endCalendarHighlightCellsSpy.calledOnce).toEqual(true);
+                    expect(endCalendarHighlightCellsSpy.args[0][0]).toEqual(startDate);
+                    expect(endCalendarHighlightCellsSpy.args[0][1]).toEqual(endDate);
+                });
+
+                it('does not call either calendar\'s highlight cells method if an invalid date range is used', function(){
+                    var startDate = moment([2012,11,31]),
+                        endDate = moment([2012,11,1]);
+
+                    picker.highlightRange(startDate, endDate);
+
+                    expect(startCalendarHighlightCellsSpy.called).toEqual(false);
+                    expect(endCalendarHighlightCellsSpy.called).toEqual(false);
                 });
             });
 
