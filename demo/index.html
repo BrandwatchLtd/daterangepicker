@@ -16,11 +16,26 @@
 
             <div id="simple">
                 <h2>Simple</h2>
+                <p>A datepicker instantiated with no options</p>
                 <input id="date1"></input>
                 <div id="picker1"/>
 
                 <script>
                     $('#date1').daterangepicker();
+                </script>
+            </div>
+
+            <div id="presetRange">
+                <h2>Preset Date Range</h2>
+                <p>A datepicker instantiated with a start and end date</p>
+                <input id="date2"></input>
+                <div id="picker2"/>
+
+                <script>
+                    $('#date2').daterangepicker({
+                        startDate: '2012-12-24',
+                        endDate: '2012-12-31'
+                    });
                 </script>
             </div>
         </div>
