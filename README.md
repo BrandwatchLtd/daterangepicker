@@ -1,7 +1,7 @@
 daterangepicker
 ===============
 
-very simple date range picker, using moment.js
+very simple date range picker, using [moment.js](http://momentjs.com/)
 
 
 Running the demos
@@ -9,9 +9,9 @@ Running the demos
 
 Pull down the repo then execute:
 
-./serve.sh
+    ./serve.sh
 
-and open http://localhost:8080/demo
+and open `http://localhost:8080/demo`
 
 
 Running the tests
@@ -19,6 +19,6 @@ Running the tests
 
 Pull down the repo then execute:
 
-./serve.sh
+    ./serve.sh
 
-and open http://localhost:8080/test
+and open `http://localhost:8080/test`
