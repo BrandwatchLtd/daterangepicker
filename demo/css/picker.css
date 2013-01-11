@@ -9,9 +9,14 @@ body {
     border: solid 1px #AAA;
     overflow:auto;
     position:absolute;
+    width:auto;
     background:#FFF;
     z-index:999;
+    width:500px;
 }
+    .picker.withPresets {
+        width:620px;
+    }
     .picker th{
         padding: 0 0.25em;
     }
@@ -19,19 +24,34 @@ body {
         float: left;
         margin: 10px;
     }
-td.day {
+.picker td.day {
     text-align:center;
     cursor: pointer;
 }
-    td.day.selected{
+    .picker td.day.selected{
         background-color:#AAA;
         color:#FFF;
         border-radius:2px;
     }
-    td.inRange{
-        background-color:#CCC;
-        color:#FFF;
-    }
-td.grey{
+.picker td.inRange{
+    background-color:#CCC;
+    color:#FFF;
+}
+.picker td.grey{
     color: #CCC;
 }
+
+.picker .presets {
+    float:left;
+    list-style-type: none;
+    width:100px;
+    margin:10px 0 0;
+}
+    .picker .presets li {
+        border-radius: 4px;
+        padding:2px 4px;
+        color: #FFF;
+        background-color: #AAA;
+        margin: 4px 8px;
+        cursor: pointer;
+    }

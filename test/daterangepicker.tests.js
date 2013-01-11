@@ -265,6 +265,57 @@ define(['lib/daterangepicker/daterangepicker'],
                     });
                 });
 
+                describe('custom range supplied in options', function(){
+                    beforeEach(function(){
+                        picker = daterangepicker.create({
+                            startDate: '2013-01-01',
+                            endDate: '2013-02-14'
+                        });
+                    });
+
+                    it('creates a calendar for the specified month as this.startCalendar', function(){
+                        expect(picker.startCalendar).toBeDefined();
+                        expect(picker.startCalendar.monthToDisplay.month()).toEqual(0);
+                    });
+
+                    it('creates a calendar for the specified month as this.endCalendar', function(){
+                        expect(picker.endCalendar).toBeDefined();
+                        expect(picker.endCalendar.monthToDisplay.month()).toEqual(1);
+                    });
+
+                    it('uses the specified date as the startCalendar\'s selectedDate', function(){
+                        expect(picker.startCalendar.selectedDate.year()).toEqual(2013);
+                        expect(picker.startCalendar.selectedDate.month()).toEqual(0);
+                        expect(picker.startCalendar.selectedDate.date()).toEqual(1);
+                    });
+
+                    it('uses the specified date as the endCalendar\'s selectedDate', function(){
+                        expect(picker.endCalendar.selectedDate.year()).toEqual(2013);
+                        expect(picker.endCalendar.selectedDate.month()).toEqual(1);
+                        expect(picker.endCalendar.selectedDate.date()).toEqual(14);
+                    });
+                });
+
+                describe('date range presets supplied in options', function(){
+                    it('stores the presets hash as this.presets', function(){
+                        var presets = {
+                            foo: {
+                                startDate: '2013-01-01',
+                                endDate: '2013-01-31'
+                            },
+                            bar: {
+                                startDate: '2014-01-01',
+                                endDate: '2014-01-31'
+                            }
+                        };
+
+                        picker = daterangepicker.create({
+                            presets: presets
+                        });
+
+                        expect(picker.presets).toEqual(presets);
+                    });
+                });
             });
 
             describe('rendering', function(){
@@ -337,10 +388,10 @@ define(['lib/daterangepicker/daterangepicker'],
                     expect(highlightRangeSpy.args[0][1].toString()).toEqual(moment([2012,11,30]).toString());
                 });
 
-                it('triggers a rangeSelected event when the startCalendar date changes', function(){
+                it('triggers a startDateSelected event when the startCalendar date changes', function(){
                     var spy = sinon.spy();
 
-                    picker.bind('rangeSelected', spy);
+                    picker.bind('startDateSelected', spy);
 
                     picker.startCalendar.$el.find('.day[data-date="2012-12-01"]').click();
 
@@ -348,10 +399,10 @@ define(['lib/daterangepicker/daterangepicker'],
                     expect(spy.args[0][0].startDate.toString()).toEqual(moment([2012,11,1]).toString());
                 });
 
-                it('triggers a rangeSelected event when the endCalendar date changes', function(){
+                it('triggers a endDateSelected event when the endCalendar date changes', function(){
                     var spy = sinon.spy();
 
-                    picker.bind('rangeSelected', spy);
+                    picker.bind('endDateSelected', spy);
 
                     picker.endCalendar.$el.find('.day[data-date="2012-12-30"]').click();
 
@@ -405,10 +456,67 @@ define(['lib/daterangepicker/daterangepicker'],
                 });
             });
 
+            describe('presets', function(){
+                beforeEach(function(){
+                    var christmas2012Str = moment([2012,11,25]).format('YYYY-MM-DD'),
+                        nye2012Str = moment([2012,11,31]).format('YYYY-MM-DD');
+
+                    picker = daterangepicker.create({
+                        presets: {
+                            'christmas 2012': {
+                                startDate: christmas2012Str,
+                                endDate: christmas2012Str
+                            },
+                            'new years eve 2012': {
+                                startDate: nye2012Str,
+                                endDate: nye2012Str
+                            }
+                        }
+                    });
+
+                    picker.render();
+                });
+
+                it('renders the presets list', function(){
+                    expect(picker.$el.find('.presets').length).toEqual(1);
+
+                    expect(picker.$el.find('.presets li').eq(0).text()).toEqual('christmas 2012');
+                    expect(picker.$el.find('.presets li').eq(0).data('startdate')).toEqual('2012-12-25');
+                    expect(picker.$el.find('.presets li').eq(0).data('enddate')).toEqual('2012-12-25');
+
+                    expect(picker.$el.find('.presets li').eq(1).text()).toEqual('new years eve 2012');
+                    expect(picker.$el.find('.presets li').eq(1).data('startdate')).toEqual('2012-12-31');
+                    expect(picker.$el.find('.presets li').eq(1).data('enddate')).toEqual('2012-12-31');
+                });
+
+                it('selects the corresponding date range when a preset is clicked', function(){
+                    var christmas2012 = moment([2012,11,25]);
+
+                    picker.$el.find('.presets li').eq(0).click();
+
+                    expect(picker.getStartDate().toString()).toEqual(christmas2012.toString());
+                    expect(picker.getEndDate().toString()).toEqual(christmas2012.toString());
+                });
+
+                it('triggers a rangeSelected event when a preset is chosen', function(){
+                    var spy = sinon.spy(),
+                        christmas2012 = moment([2012,11,25]);
+
+                    picker.bind('rangeSelected', spy);
+
+                    picker.$el.find('.presets li').eq(0).click();
+
+                    expect(spy.calledOnce).toEqual(true);
+                    expect(spy.args[0][0].startDate.toString()).toEqual(christmas2012.toString());
+                    expect(spy.args[0][0].endDate.toString()).toEqual(christmas2012.toString());
+                });
+            });
         });
 
         describe('as a jquery plugin', function(){
-            var input;
+            var input,
+                christmas2012Str = moment([2012,11,25]).format('YYYY-MM-DD'),
+                nye2012Str = moment([2012,11,31]).format('YYYY-MM-DD');
 
             beforeEach(function(){
                 input = $('<input id="pickerInput"/>');
@@ -416,7 +524,17 @@ define(['lib/daterangepicker/daterangepicker'],
 
                 input.daterangepicker({
                     startDate: '2013-01-01',
-                    endDate: '2013-02-14'
+                    endDate: '2013-02-14',
+                    presets: {
+                        'christmas 2012': {
+                            startDate: christmas2012Str,
+                            endDate: christmas2012Str
+                        },
+                        'new years eve 2012': {
+                            startDate: nye2012Str,
+                            endDate: nye2012Str
+                        }
+                    }
                 });
             });
 
@@ -463,7 +581,7 @@ define(['lib/daterangepicker/daterangepicker'],
                 hideStub.restore();
             });
 
-            it('updates the target element when a date range is selected', function(){
+            it('updates the target element when a start date is selected', function(){
                 input.click();
 
                 var picker = input.data('picker');
@@ -471,6 +589,26 @@ define(['lib/daterangepicker/daterangepicker'],
                 picker.startCalendar.$el.find('[data-date="2013-01-01"]').click();
 
                 expect(input.val()).toEqual('01 Jan 2013 - 14 Feb 2013');
+            });
+
+            it('updates the target element when an end date is selected', function(){
+                input.click();
+
+                var picker = input.data('picker');
+
+                picker.endCalendar.$el.find('[data-date="2013-03-01"]').click();
+
+                expect(input.val()).toEqual('01 Jan 2013 - 01 Mar 2013');
+            });
+
+            it('updates the target element when a preset date is selected', function(){
+                input.click();
+
+                var picker = input.data('picker');
+
+                picker.$el.find('.presets li').eq(0).click();
+
+                expect(input.val()).toEqual('25 Dec 2012 - 25 Dec 2012');
             });
         });
 

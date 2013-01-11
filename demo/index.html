@@ -9,12 +9,18 @@
         <script src="lib/underscore.js"></script>
         <script src="lib/moment.js"></script>
         <script src="/lib/daterangepicker/daterangepicker.js"></script>
+
+        <style>
+            .demo {
+                margin:40px 0;
+            }
+        </style>
     </head>
     <body>
         <div class="container">
             <h1>DateRangePicker demo</h1>
 
-            <div id="simple">
+            <div id="simple" class="demo">
                 <h2>Simple</h2>
                 <p>A datepicker instantiated with no options</p>
                 <input id="date1"></input>
@@ -25,7 +31,7 @@
                 </script>
             </div>
 
-            <div id="presetRange">
+            <div id="presetRange" class="demo">
                 <h2>Preset Date Range</h2>
                 <p>A datepicker instantiated with a start and end date</p>
                 <input id="date2"></input>
@@ -35,6 +41,38 @@
                     $('#date2').daterangepicker({
                         startDate: '2012-12-24',
                         endDate: '2012-12-31'
+                    });
+                </script>
+            </div>
+
+            <div id="datePresets" class="demo">
+                <h2>Preset Dates</h2>
+                <p>A datepicker instantiated with a list of preset date ranges</p>
+                <input id="date3"></input>
+                <div id="picker3"/>
+
+                <script>
+                    var today = moment(),
+                        todayStr = today.format('YYYY-MM-DD'),
+                        yesterday = today.clone().subtract('days', 1),
+                        yesterdayStr = yesterday.format('YYYY-MM-DD'),
+                        sevenDaysAgoStr = today.clone().subtract('days', 6).format('YYYY-MM-DD');
+
+                    $('#date3').daterangepicker({
+                        presets: {
+                            today: {
+                                startDate: todayStr,
+                                endDate: todayStr
+                            },
+                            yesterday: {
+                                startDate: yesterdayStr,
+                                endDate: yesterdayStr
+                            },
+                            'last seven days': {
+                                startDate: sevenDaysAgoStr,
+                                endDate: todayStr
+                            }
+                        }
                     });
                 </script>
             </div>
