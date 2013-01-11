@@ -16,7 +16,10 @@ define(['lib/daterangepicker/daterangepicker'],
 
             beforeEach(function(){
                 picker = daterangepicker.create();
-                calendar = picker._createCalendar(11, 2012, '2012-12-25', 'myCalendar');
+                calendar = picker._createCalendar({
+                    selectedDate: '2012-12-25',
+                    className: 'myCalendar'
+                });
             });
 
             it('calculates the start date as the first monday', function(){
@@ -30,11 +33,11 @@ define(['lib/daterangepicker/daterangepicker'],
 
             describe('initialization', function(){
                 it('stores the selected date', function(){
-                    expect(calendar.selectedDate).toEqual(moment([2012,11,25]));
+                    expect(calendar.selectedDate.toString()).toEqual(moment([2012,11,25]).toString());
                 });
 
                 it('stores the selected month', function(){
-                    expect(calendar.selectedMonth).toEqual(moment([2012,11,1]));
+                    expect(calendar.monthToDisplay).toEqual(moment([2012,11,1]));
                 });
 
                 it('sets this.$el to be an empty div', function(){
@@ -104,7 +107,7 @@ define(['lib/daterangepicker/daterangepicker'],
                     expect(calendar.$el.find('.selected').length).toEqual(1);
                 });
 
-                it('updates the month if the date clicked is not on this.selectedMonth', function(){
+                it('updates the month if the date clicked is not on this.monthToDisplay', function(){
                     var previousMonthDate = calendar.$el.find('.day[data-date="2012-11-30"]'),
                         showMonthSpy = sinon.spy(calendar, 'showMonth');
 
@@ -125,11 +128,11 @@ define(['lib/daterangepicker/daterangepicker'],
                     expect(calendar.selectedDate.date()).toEqual(1);
                 });
 
-                it('updates this.selectedMonth when next is clicked', function(){
+                it('updates this.monthToDisplay when next is clicked', function(){
                     calendar.$el.find('.next').click();
 
-                    expect(calendar.selectedMonth.month()).toEqual(0);
-                    expect(calendar.selectedMonth.year()).toEqual(2013);
+                    expect(calendar.monthToDisplay.month()).toEqual(0);
+                    expect(calendar.monthToDisplay.year()).toEqual(2013);
                 });
 
                 it('re-renders when next is clicked', function(){
@@ -140,11 +143,11 @@ define(['lib/daterangepicker/daterangepicker'],
                     expect(renderStub.calledOnce).toEqual(true);
                 });
 
-                it('updates this.selectedMonth when previous is clicked', function(){
+                it('updates this.monthToDisplay when previous is clicked', function(){
                     calendar.$el.find('.prev').click();
 
-                    expect(calendar.selectedMonth.month()).toEqual(10);
-                    expect(calendar.selectedMonth.year()).toEqual(2012);
+                    expect(calendar.monthToDisplay.month()).toEqual(10);
+                    expect(calendar.monthToDisplay.year()).toEqual(2012);
                 });
 
                 it('re-renders when previous is clicked', function(){
@@ -161,10 +164,10 @@ define(['lib/daterangepicker/daterangepicker'],
                     calendar.render();
                 });
 
-                it('updates this.selectedMonth', function(){
+                it('updates this.monthToDisplay', function(){
                     calendar.showMonth(2010,0);
 
-                    expect(calendar.selectedMonth).toEqual(moment([2010,0]));
+                    expect(calendar.monthToDisplay).toEqual(moment([2010,0]));
                 });
 
                 it('re-renders', function(){
@@ -232,14 +235,14 @@ define(['lib/daterangepicker/daterangepicker'],
                         var now = moment();
 
                         expect(picker.startCalendar).toBeDefined();
-                        expect(picker.startCalendar.selectedMonth.month()).toEqual(now.month());
+                        expect(picker.startCalendar.monthToDisplay.month()).toEqual(now.month());
                     });
 
                     it('creates a calendar for the current month as this.endCalendar', function(){
                         var now = moment();
 
                         expect(picker.endCalendar).toBeDefined();
-                        expect(picker.endCalendar.selectedMonth.month()).toEqual(now.month());
+                        expect(picker.endCalendar.monthToDisplay.month()).toEqual(now.month());
                     });
 
                     it('uses the current date as the startCalendar\'s selectedDate', function(){
@@ -293,9 +296,8 @@ define(['lib/daterangepicker/daterangepicker'],
             describe('events', function(){
                 beforeEach(function(){
                     picker = daterangepicker.create({
-                        startDate: '2012-12-01',
-                        endDate: '2012-12-31',
-                        selectedDate: '2012-12-25'
+                        startDate: '2012-12-25',
+                        endDate: '2012-12-31'
                     });
                     picker.render();
                 });
@@ -303,13 +305,13 @@ define(['lib/daterangepicker/daterangepicker'],
                 it('changes the this.endCalendar.selectedDate if a later date is clicked on this.startCalendar', function(){
                     picker.startCalendar.updateSelectedDate('2014-01-01');
 
-                    expect(picker.endCalendar.selectedDate.unix()).toEqual(picker.startCalendar.selectedDate.unix());
+                    expect(picker.endCalendar.selectedDate.toString()).toEqual(picker.startCalendar.selectedDate.toString());
                 });
 
                 it('changes the this.startCalendar.selectedDate if an earlier date is clicked on this.endCalendar', function(){
                     picker.endCalendar.updateSelectedDate('2011-01-01');
 
-                    expect(picker.endCalendar.selectedDate.unix()).toEqual(picker.startCalendar.selectedDate.unix());
+                    expect(picker.endCalendar.selectedDate.toString()).toEqual(picker.startCalendar.selectedDate.toString());
                 });
 
                 it('calls this.highlightRange when the startCalendar raises an onDateSelected event', function(){
@@ -318,8 +320,8 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.startCalendar.trigger('onDateSelected', { date: '2012-12-01' });
 
                     expect(highlightRangeSpy.calledOnce).toEqual(true);
-                    expect(highlightRangeSpy.args[0][0].unix()).toEqual(moment([2012,11,1]).unix());
-                    expect(highlightRangeSpy.args[0][1].unix()).toEqual(picker.getEndDate().unix());
+                    expect(highlightRangeSpy.args[0][0].toString()).toEqual(moment([2012,11,1]).toString());
+                    expect(highlightRangeSpy.args[0][1].toString()).toEqual(picker.getEndDate().toString());
                 });
 
                 it('calls this.highlightRange when the endCalendar raises an onDateSelected event', function(){
@@ -328,8 +330,8 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.endCalendar.trigger('onDateSelected', { date: '2012-12-30' });
 
                     expect(highlightRangeSpy.calledOnce).toEqual(true);
-                    expect(highlightRangeSpy.args[0][0].unix()).toEqual(moment([2012,11,25]).unix());
-                    expect(highlightRangeSpy.args[0][1].unix()).toEqual(moment([2012,11,30]).unix());
+                    expect(highlightRangeSpy.args[0][0].toString()).toEqual(moment([2012,11,25]).toString());
+                    expect(highlightRangeSpy.args[0][1].toString()).toEqual(moment([2012,11,30]).toString());
                 });
             });
 
