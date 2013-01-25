@@ -369,7 +369,7 @@ define(['lib/daterangepicker/daterangepicker'],
                 });
 
                 it('calls this.highlightRange when the startCalendar raises an onDateSelected event', function(){
-                    var highlightRangeSpy = sinon.spy(picker, 'highlightRange');
+                    var highlightRangeSpy = sinon.spy(picker, '_highlightRange');
 
                     picker.startCalendar.trigger('onDateSelected', { date: '2012-12-01' });
 
@@ -379,7 +379,7 @@ define(['lib/daterangepicker/daterangepicker'],
                 });
 
                 it('calls this.highlightRange when the endCalendar raises an onDateSelected event', function(){
-                    var highlightRangeSpy = sinon.spy(picker, 'highlightRange');
+                    var highlightRangeSpy = sinon.spy(picker, '_highlightRange');
 
                     picker.endCalendar.trigger('onDateSelected', { date: '2012-12-30' });
 
@@ -427,7 +427,7 @@ define(['lib/daterangepicker/daterangepicker'],
                     var startDate = moment([2012,11,1]),
                         endDate = moment([2012,11,31]);
 
-                    picker.highlightRange(startDate, endDate);
+                    picker._highlightRange(startDate, endDate);
 
                     expect(startCalendarHighlightCellsSpy.calledOnce).toEqual(true);
                     expect(startCalendarHighlightCellsSpy.args[0][0]).toEqual(startDate);
@@ -438,7 +438,7 @@ define(['lib/daterangepicker/daterangepicker'],
                     var startDate = moment([2012,11,1]),
                         endDate = moment([2012,11,31]);
 
-                    picker.highlightRange(startDate, endDate);
+                    picker._highlightRange(startDate, endDate);
 
                     expect(endCalendarHighlightCellsSpy.calledOnce).toEqual(true);
                     expect(endCalendarHighlightCellsSpy.args[0][0]).toEqual(startDate);
@@ -449,7 +449,7 @@ define(['lib/daterangepicker/daterangepicker'],
                     var startDate = moment([2012,11,31]),
                         endDate = moment([2012,11,1]);
 
-                    picker.highlightRange(startDate, endDate);
+                    picker._highlightRange(startDate, endDate);
 
                     expect(startCalendarHighlightCellsSpy.called).toEqual(false);
                     expect(endCalendarHighlightCellsSpy.called).toEqual(false);
