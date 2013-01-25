@@ -543,11 +543,7 @@ define(['lib/daterangepicker/daterangepicker'],
                 $('#testArea').empty();
             });
 
-            it('attaches a picker instance to the target element on first click', function(){
-                expect(input.data('picker')).not.toBeDefined();
-
-                input.click();
-
+            it('attaches a picker instance to the target element', function(){
                 expect(input.data('picker')).toBeDefined();
             });
 
