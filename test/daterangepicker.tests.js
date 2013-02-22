@@ -101,15 +101,6 @@ define(['lib/daterangepicker/daterangepicker'],
                     calendar.$el.find('td.day.selected').click();
                 });
 
-                it('changes the day td with the selected class when a day is clicked', function(){
-                    var newDate = calendar.$el.find('.day[data-date="2012-12-01"]');
-
-                    newDate.click();
-
-                    expect(newDate.hasClass('selected')).toEqual(true);
-                    expect(calendar.$el.find('.selected').length).toEqual(1);
-                });
-
                 it('updates the month if the date clicked is not on this.monthToDisplay', function(){
                     var previousMonthDate = calendar.$el.find('.day[data-date="2012-11-30"]'),
                         showMonthSpy = sinon.spy(calendar, 'showMonth');
@@ -338,12 +329,22 @@ define(['lib/daterangepicker/daterangepicker'],
 
                 it('renders the startCalendar into this.$el', function(){
                     expect(startCalendarRenderSpy.calledOnce).toEqual(true);
-                    expect(picker.startCalendar.$el.parent().is(picker.$el)).toEqual(true);
+                    expect(picker.$el.find(picker.startCalendar.$el).length).toEqual(1);
+                });
+
+                it('renders the correct label for the startCalendar', function(){
+                    expect(picker.startCalendar.$el.find('.calendar-label').length).toEqual(1);
+                    expect(picker.startCalendar.$el.find('.calendar-label').text()).toEqual('From');
                 });
 
                 it('renders the endCalendar into this.$el', function(){
                     expect(endCalendarRenderSpy.calledOnce).toEqual(true);
-                    expect(picker.endCalendar.$el.parent().is(picker.$el)).toEqual(true);
+                    expect(picker.$el.find(picker.endCalendar.$el).length).toEqual(1);
+                });
+
+                it('renders the correct label for the endCalendar', function(){
+                    expect(picker.endCalendar.$el.find('.calendar-label').length).toEqual(1);
+                    expect(picker.endCalendar.$el.find('.calendar-label').text()).toEqual('To');
                 });
             });
 
@@ -416,7 +417,10 @@ define(['lib/daterangepicker/daterangepicker'],
                     endCalendarHighlightCellsSpy;
 
                 beforeEach(function(){
-                    picker = daterangepicker.create();
+                    picker = daterangepicker.create({
+                        startDate: '2012-12-01',
+                        endDate: '2012-12-31'
+                    });
                     picker.render();
 
                     startCalendarHighlightCellsSpy = sinon.spy(picker.startCalendar, 'highlightCells');
@@ -453,6 +457,26 @@ define(['lib/daterangepicker/daterangepicker'],
 
                     expect(startCalendarHighlightCellsSpy.called).toEqual(false);
                     expect(endCalendarHighlightCellsSpy.called).toEqual(false);
+                });
+
+                it('adds a "start" marker to the start cell', function(){
+                    var startDate = moment([2012,11,31]),
+                        endDate = moment([2012,11,1]);
+
+                    picker._highlightRange(startDate, endDate);
+
+                    expect(picker.startCalendar.$el.find('.marker').length).toEqual(1);
+                    expect(picker.startCalendar.$el.find('.selected[data-date="2012-12-01"] .marker').text()).toEqual('start');
+                });
+
+                it('adds an "end" marker to the end cell', function(){
+                    var startDate = moment([2012,11,31]),
+                        endDate = moment([2012,11,1]);
+
+                    picker._highlightRange(startDate, endDate);
+
+                    expect(picker.endCalendar.$el.find('.marker').length).toEqual(1);
+                    expect(picker.endCalendar.$el.find('.selected[data-date="2012-12-31"] .marker').text()).toEqual('end');
                 });
             });
 
