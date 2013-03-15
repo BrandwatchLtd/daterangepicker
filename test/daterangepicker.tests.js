@@ -522,11 +522,11 @@ define(['lib/daterangepicker/daterangepicker'],
                     expect(picker.getEndDate().toString()).toEqual(christmas2012.toString());
                 });
 
-                it('triggers a rangeSelected event when a preset is chosen', function(){
+                it('triggers a presetSelected event when a preset is chosen', function(){
                     var spy = sinon.spy(),
                         christmas2012 = moment([2012,11,25]);
 
-                    picker.bind('rangeSelected', spy);
+                    picker.bind('presetSelected', spy);
 
                     picker.$el.find('.presets li').eq(0).click();
 
