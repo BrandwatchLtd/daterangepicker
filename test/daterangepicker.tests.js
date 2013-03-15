@@ -458,26 +458,6 @@ define(['lib/daterangepicker/daterangepicker'],
                     expect(startCalendarHighlightCellsSpy.called).toEqual(false);
                     expect(endCalendarHighlightCellsSpy.called).toEqual(false);
                 });
-
-                it('adds a "start" marker to the start cell', function(){
-                    var startDate = moment([2012,11,31]),
-                        endDate = moment([2012,11,1]);
-
-                    picker._highlightRange(startDate, endDate);
-
-                    expect(picker.startCalendar.$el.find('.marker').length).toEqual(1);
-                    expect(picker.startCalendar.$el.find('.selected[data-date="2012-12-01"] .marker').text()).toEqual('start');
-                });
-
-                it('adds an "end" marker to the end cell', function(){
-                    var startDate = moment([2012,11,31]),
-                        endDate = moment([2012,11,1]);
-
-                    picker._highlightRange(startDate, endDate);
-
-                    expect(picker.endCalendar.$el.find('.marker').length).toEqual(1);
-                    expect(picker.endCalendar.$el.find('.selected[data-date="2012-12-31"] .marker').text()).toEqual('end');
-                });
             });
 
             describe('presets', function(){
