@@ -583,6 +583,7 @@ define(['lib/daterangepicker/daterangepicker'],
                 expect(jqCssStub.args[0][0].zIndex).toEqual(1234);
 
                 jqShowStub.restore();
+                jqCssStub.restore();
             });
 
             it('hides the picker when a click occurs outside the picker area', function(){
