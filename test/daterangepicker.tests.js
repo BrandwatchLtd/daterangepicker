@@ -527,6 +527,7 @@ define(['lib/daterangepicker/daterangepicker'],
                 $('#testArea').append(input);
 
                 input.daterangepicker({
+                    zIndex: 1234,
                     startDate: '2013-01-01',
                     endDate: '2013-02-14',
                     presets: {
@@ -568,6 +569,20 @@ define(['lib/daterangepicker/daterangepicker'],
                 expect(showStub.calledOnce).toEqual(true);
 
                 showStub.restore();
+            });
+
+            it('shows the picker with a custom z-index', function(){
+                var jqShowStub = sinon.stub($.prototype, 'show', function(){ return this; }),
+                    jqCssStub = sinon.stub($.prototype, 'css', function(){ return this; });
+
+                input.click();
+
+                expect(jqShowStub.calledOnce).toEqual(true);
+
+                expect(jqCssStub.calledOnce).toEqual(true);
+                expect(jqCssStub.args[0][0].zIndex).toEqual(1234);
+
+                jqShowStub.restore();
             });
 
             it('hides the picker when a click occurs outside the picker area', function(){
