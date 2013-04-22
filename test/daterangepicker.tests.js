@@ -216,6 +216,192 @@ define(['lib/daterangepicker/daterangepicker'],
             });
         });
 
+        describe('a DateRangePicker with single date', function(){
+
+            describe('initialization', function(){
+
+                describe('defaults', function(){
+                    beforeEach(function(){
+                        picker = daterangepicker.create({
+                            singleDate: true
+                        });
+                    });
+
+                    it('creates a calendar for the current month as this.startCalendar', function(){
+                        var now = moment();
+
+                        expect(picker.startCalendar).toBeDefined();
+                        expect(picker.startCalendar.monthToDisplay.month()).toEqual(now.month());
+                    });
+
+                    it('uses the current date as the startCalendar\'s selectedDate', function(){
+                        var now = moment();
+
+                        expect(picker.startCalendar.selectedDate.year()).toEqual(now.year());
+                        expect(picker.startCalendar.selectedDate.month()).toEqual(now.month());
+                        expect(picker.startCalendar.selectedDate.date()).toEqual(now.date());
+                    });
+                });
+
+                describe('custom date supplied in options', function(){
+                    beforeEach(function(){
+                        picker = daterangepicker.create({
+                            startDate: '2013-01-01',
+                            singleDate: true
+                        });
+                    });
+
+                    it('creates a calendar for the specified month as this.startCalendar', function(){
+                        expect(picker.startCalendar).toBeDefined();
+                        expect(picker.startCalendar.monthToDisplay.month()).toEqual(0);
+                    });
+
+                    it('uses the specified date as the startCalendar\'s selectedDate', function(){
+                        expect(picker.startCalendar.selectedDate.year()).toEqual(2013);
+                        expect(picker.startCalendar.selectedDate.month()).toEqual(0);
+                        expect(picker.startCalendar.selectedDate.date()).toEqual(1);
+                    });
+                });
+
+                describe('date range presets supplied in options', function(){
+                    it('stores the presets hash as this.presets', function(){
+                        var presets = {
+                            foo: {
+                                startDate: '2013-01-01'
+                            },
+                            bar: {
+                                startDate: '2014-01-01'
+                            }
+                        };
+
+                        picker = daterangepicker.create({
+                            presets: presets,
+                            singleDate: true
+                        });
+
+                        expect(picker.presets).toEqual(presets);
+                    });
+                });
+            });
+
+            describe('rendering', function(){
+                var startCalendarRenderSpy;
+
+                beforeEach(function(){
+                    picker = daterangepicker.create({
+                        singleDate: true
+                    });
+
+                    startCalendarRenderSpy = sinon.spy(picker.startCalendar, 'render');
+
+                    picker.render();
+                });
+
+                afterEach(function(){
+                    startCalendarRenderSpy = undefined;
+                });
+
+                it('does not create an end calendar', function(){
+                    expect(picker.endCalender).not.toBeDefined();
+                });
+
+                it('renders the startCalendar into this.$el', function(){
+                    expect(startCalendarRenderSpy.calledOnce).toEqual(true);
+                    expect(picker.$el.find(picker.startCalendar.$el).length).toEqual(1);
+                });
+
+                it('does not render the calendar label', function(){
+                    expect(picker.startCalendar.$el.find('.calendar-label').length).toEqual(0);
+                });
+            });
+
+            describe('events', function(){
+                beforeEach(function(){
+                    picker = daterangepicker.create({
+                        startDate: '2012-12-25',
+                        singleDate: true
+                    });
+                    picker.render();
+                });
+
+                it('calls this.highlightRange when the startCalendar raises an onDateSelected event', function(){
+                    var highlightRangeSpy = sinon.spy(picker, '_highlightRange');
+
+                    picker.startCalendar.trigger('onDateSelected', { date: '2012-12-01' });
+
+                    expect(highlightRangeSpy.calledOnce).toEqual(true);
+                    expect(highlightRangeSpy.args[0][0].toString()).toEqual(moment([2012,11,1]).toString());
+                    expect(highlightRangeSpy.args[0][1].toString()).toEqual(picker.getEndDate().toString());
+                });
+
+                it('triggers a startDateSelected event when the startCalendar date changes', function(){
+                    var spy = sinon.spy();
+
+                    picker.bind('startDateSelected', spy);
+
+                    picker.startCalendar.$el.find('.day[data-date="2012-12-01"]').click();
+
+                    expect(spy.calledOnce).toEqual(true);
+                    expect(spy.args[0][0].startDate.toString()).toEqual(moment([2012,11,1]).toString());
+                });
+            });
+
+            describe('presets', function(){
+                beforeEach(function(){
+                    var christmas2012Str = moment([2012,11,25]).format('YYYY-MM-DD'),
+                        nye2012Str = moment([2012,11,31]).format('YYYY-MM-DD');
+
+                    picker = daterangepicker.create({
+                        presets: {
+                            'christmas 2012': {
+                                startDate: christmas2012Str
+                            },
+                            'new years eve 2012': {
+                                startDate: nye2012Str
+                            }
+                        },
+                        singleDate: true
+                    });
+
+                    picker.render();
+                });
+
+                it('renders the presets list', function(){
+                    expect(picker.$el.find('.presets').length).toEqual(1);
+
+                    expect(picker.$el.find('.presets li').eq(0).text()).toEqual('christmas 2012');
+                    expect(picker.$el.find('.presets li').eq(0).data('startdate')).toEqual('2012-12-25');
+                    expect(picker.$el.find('.presets li').eq(0).data('enddate')).toEqual('2012-12-25');
+
+                    expect(picker.$el.find('.presets li').eq(1).text()).toEqual('new years eve 2012');
+                    expect(picker.$el.find('.presets li').eq(1).data('startdate')).toEqual('2012-12-31');
+                    expect(picker.$el.find('.presets li').eq(1).data('enddate')).toEqual('2012-12-31');
+                });
+
+                it('selects the corresponding date when a preset is clicked', function(){
+                    var christmas2012 = moment([2012,11,25]);
+
+                    picker.$el.find('.presets li').eq(0).click();
+
+                    expect(picker.getStartDate().toString()).toEqual(christmas2012.toString());
+                    expect(picker.getEndDate().toString()).toEqual(christmas2012.toString());
+                });
+
+                it('triggers a presetSelected event when a preset is chosen', function(){
+                    var spy = sinon.spy(),
+                        christmas2012 = moment([2012,11,25]);
+
+                    picker.bind('presetSelected', spy);
+
+                    picker.$el.find('.presets li').eq(0).click();
+
+                    expect(spy.calledOnce).toEqual(true);
+                    expect(spy.args[0][0].startDate.toString()).toEqual(christmas2012.toString());
+                    expect(spy.args[0][0].endDate.toString()).toEqual(christmas2012.toString());
+                });
+            });
+        });
+
         describe('a DateRangePicker', function(){
 
             describe('initialization', function(){
