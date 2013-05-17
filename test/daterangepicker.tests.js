@@ -5,7 +5,10 @@ define(['lib/daterangepicker/daterangepicker'],
     var DateRangePicker = daterangepicker.DateRangePicker;
 
     describe('daterangepicker', function(){
-        var picker;
+        var picker,
+            christmas2012Str = moment([2012,11,25]).format('YYYY-MM-DD'),
+            nye2012Str = moment([2012,11,31]).format('YYYY-MM-DD');
+
 
         afterEach(function(){
             if(picker){
@@ -83,6 +86,42 @@ define(['lib/daterangepicker/daterangepicker'],
                 it('renders the month title', function(){
                     expect(calendar.$el.find('th.month-title').text()).toEqual('December 2012');
                 });
+
+                it('does not render the close button when no presets specified', function(){
+                    picker.render();
+                    expect(picker.$el.find('.close').length).toEqual(0);
+                });
+
+                it('renders the close button when presets specified', function(){
+                    picker = daterangepicker.create({
+                        presets: {
+                            'christmas 2012': {
+                                startDate: christmas2012Str
+                            },
+                            'new years eve 2012': {
+                                startDate: nye2012Str
+                            }
+                        }
+                    });
+                    picker.render();
+                    expect(picker.$el.find('.close').length).toEqual(1);
+                });
+
+                it('renders the close button with custom css class', function(){
+                    picker = daterangepicker.create({
+                        presets: {
+                            'christmas 2012': {
+                                startDate: christmas2012Str
+                            },
+                            'new years eve 2012': {
+                                startDate: nye2012Str
+                            }
+                        },
+                        closeButtonCssClass: 'testClass'
+                    });
+                    picker.render();
+                    expect(picker.$el.find('.close .testClass').length).toEqual(1);
+                });
             });
 
             describe('events', function(){
@@ -150,6 +189,26 @@ define(['lib/daterangepicker/daterangepicker'],
                     calendar.$el.find('.prev').click();
 
                     expect(renderStub.calledOnce).toEqual(true);
+                });
+
+                it('closes the picker when clicking close button', function(){
+                    var hideSpy;
+                    picker = daterangepicker.create({
+                        presets: {
+                            'christmas 2012': {
+                                startDate: christmas2012Str
+                            },
+                            'new years eve 2012': {
+                                startDate: nye2012Str
+                            }
+                        }
+                    });
+                    picker.render();
+
+                    hideSpy = sinon.spy(picker, 'hide');
+                    picker.$el.find('.close a').click();
+
+                    expect(hideSpy.calledOnce).toEqual(true);
                 });
             });
 
@@ -348,9 +407,6 @@ define(['lib/daterangepicker/daterangepicker'],
 
             describe('presets', function(){
                 beforeEach(function(){
-                    var christmas2012Str = moment([2012,11,25]).format('YYYY-MM-DD'),
-                        nye2012Str = moment([2012,11,31]).format('YYYY-MM-DD');
-
                     picker = daterangepicker.create({
                         presets: {
                             'christmas 2012': {
