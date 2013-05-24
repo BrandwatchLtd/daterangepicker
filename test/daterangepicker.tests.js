@@ -2,8 +2,6 @@ define(['lib/daterangepicker/daterangepicker'],
     function(daterangepicker){
     'use strict';
 
-    var DateRangePicker = daterangepicker.DateRangePicker;
-
     describe('daterangepicker', function(){
         var picker,
             christmas2012Str = moment([2012,11,25]).format('YYYY-MM-DD'),
@@ -374,6 +372,71 @@ define(['lib/daterangepicker/daterangepicker'],
                 });
             });
 
+            describe('a DateRangePicker with UTC offset', function(){
+                var startCalendarRenderSpy,
+                    startCalendarUtcOffsetStub,
+                    endCalendarUtcOffsetStub;
+
+
+                beforeEach(function(){
+                    picker = daterangepicker.create({
+                        showUtcOffset: true,
+                        startDate: '2012-05-24',
+                        endDate: '2013-06-01'
+                    });
+
+                    startCalendarRenderSpy = sinon.spy(picker.startCalendar, 'render');
+
+                    startCalendarUtcOffsetStub = sinon.stub(picker.startCalendar, '_getTimezoneUtcOffset').returns(1);
+                    endCalendarUtcOffsetStub = sinon.stub(picker.endCalendar, '_getTimezoneUtcOffset').returns(1);
+
+                    picker.render();
+                });
+
+                afterEach(function(){
+                    startCalendarRenderSpy = undefined;
+
+                    startCalendarUtcOffsetStub.restore();
+                    endCalendarUtcOffsetStub.restore();
+                });
+
+                it('renders the utc offset inputs', function(){
+                    expect(startCalendarUtcOffsetStub.calledOnce).toEqual(true);
+                    expect(endCalendarUtcOffsetStub.calledOnce).toEqual(true);
+
+                    expect(picker.startCalendar.$el.find('.utcOffset').length).toEqual(1);
+                    expect(picker.startCalendar.$el.find('.utcOffset').first().val()).toEqual('1');
+
+                    expect(picker.endCalendar.$el.find('.utcOffset').length).toEqual(1);
+                    expect(picker.endCalendar.$el.find('.utcOffset').first().val()).toEqual('1');
+                });
+
+                describe('events', function(){
+                    var calendar;
+
+                    beforeEach(function(){
+                        calendar = picker.startCalendar;
+                    });
+
+                    afterEach(function(){
+                        calendar = undefined;
+                    });
+
+                    it('triggers an onDateSelected event with the date and utc offset clicked when a day is clicked', function(done){
+                        calendar.bind('onDateSelected', function(args){
+                            expect(args).toBeDefined();
+                            expect(args.date).toEqual('2012-05-24');
+                            expect(args.utcOffset).toEqual(1);
+
+                            done();
+                        });
+
+                        calendar.$el.find('td.day.selected').click();
+                    });
+
+                });
+            });
+
             describe('events', function(){
                 beforeEach(function(){
                     picker = daterangepicker.create({
@@ -401,7 +464,7 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.startCalendar.$el.find('.day[data-date="2012-12-01"]').click();
 
                     expect(spy.calledOnce).toEqual(true);
-                    expect(spy.args[0][0].startDate.toString()).toEqual(moment([2012,11,1]).toString());
+                    expect(spy.args[0][0].startDate.date.toString()).toEqual(moment([2012,11,1]).toString());
                 });
             });
 
@@ -452,8 +515,8 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.$el.find('.presets li').eq(0).click();
 
                     expect(spy.calledOnce).toEqual(true);
-                    expect(spy.args[0][0].startDate.toString()).toEqual(christmas2012.toString());
-                    expect(spy.args[0][0].endDate.toString()).toEqual(christmas2012.toString());
+                    expect(spy.args[0][0].startDate.date.toString()).toEqual(christmas2012.toString());
+                    expect(spy.args[0][0].endDate.date.toString()).toEqual(christmas2012.toString());
                 });
             });
         });
@@ -639,7 +702,7 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.startCalendar.$el.find('.day[data-date="2012-12-01"]').click();
 
                     expect(spy.calledOnce).toEqual(true);
-                    expect(spy.args[0][0].startDate.toString()).toEqual(moment([2012,11,1]).toString());
+                    expect(spy.args[0][0].startDate.date.toString()).toEqual(moment([2012,11,1]).toString());
                 });
 
                 it('triggers a endDateSelected event when the endCalendar date changes', function(){
@@ -650,7 +713,7 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.endCalendar.$el.find('.day[data-date="2012-12-30"]').click();
 
                     expect(spy.calledOnce).toEqual(true);
-                    expect(spy.args[0][0].endDate.toString()).toEqual(moment([2012,11,30]).toString());
+                    expect(spy.args[0][0].endDate.date.toString()).toEqual(moment([2012,11,30]).toString());
                 });
             });
 
@@ -753,8 +816,8 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.$el.find('.presets li').eq(0).click();
 
                     expect(spy.calledOnce).toEqual(true);
-                    expect(spy.args[0][0].startDate.toString()).toEqual(christmas2012.toString());
-                    expect(spy.args[0][0].endDate.toString()).toEqual(christmas2012.toString());
+                    expect(spy.args[0][0].startDate.date.toString()).toEqual(christmas2012.toString());
+                    expect(spy.args[0][0].endDate.date.toString()).toEqual(christmas2012.toString());
                 });
             });
         });

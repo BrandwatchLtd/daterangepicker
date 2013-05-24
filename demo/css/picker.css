@@ -60,6 +60,9 @@ body {
 .picker td.grey{
     color: #CCC;
 }
+.picker input.utcOffset {
+    width: 16px;
+}
 
 .picker .presets-wrapper {
     display:table;
