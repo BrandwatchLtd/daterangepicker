@@ -2,8 +2,6 @@ define(['lib/daterangepicker/daterangepicker'],
     function(daterangepicker){
     'use strict';
 
-    var DateRangePicker = daterangepicker.DateRangePicker;
-
     describe('daterangepicker', function(){
         var picker,
             christmas2012Str = moment([2012,11,25]).format('YYYY-MM-DD'),
@@ -374,6 +372,149 @@ define(['lib/daterangepicker/daterangepicker'],
                 });
             });
 
+            describe('a DateRangePicker with UTC offset', function(){
+                var startCalendarRenderSpy;
+
+
+                beforeEach(function(){
+                    picker = daterangepicker.create({
+                        showUtcOffset: true,
+                        startDate: '2012-05-24',
+                        endDate: '2013-06-01'
+                    });
+
+                    startCalendarRenderSpy = sinon.spy(picker.startCalendar, 'render');
+
+                    picker.render();
+                });
+
+                afterEach(function(){
+                    startCalendarRenderSpy = undefined;
+                });
+
+                it('renders the utc offset trigger', function(){
+                    expect(picker.startCalendar.$el.find('.openUtcControls').length).toEqual(1);
+                    expect(picker.endCalendar.$el.find('.openUtcControls').length).toEqual(1);
+                });
+
+                describe('events', function(){
+                    var calendar;
+
+                    beforeEach(function(){
+                        calendar = picker.startCalendar;
+                    });
+
+                    afterEach(function(){
+                        calendar = undefined;
+                    });
+
+                    it('shows the utc controls when the openUtcControls trigger is clicked', function(){
+                        expect(calendar.$utcControls).not.toBeDefined();
+
+                        calendar.$el.find('.openUtcControls').click();
+
+                        expect(calendar.$utcControls).toBeDefined();
+                    });
+
+                    it('hides the utc controls when their value changes', function(){
+                        var hideStub = sinon.stub(calendar, 'hideUtcControls');
+
+                        calendar.$el.find('.openUtcControls').click();
+
+                        calendar.$el.find('.utcOffset').val('12').trigger('change');
+
+                        expect(hideStub.calledOnce).toEqual(true);
+                    });
+
+                    it('updates this.utcOffset when the utc controls value changes', function(){
+                        expect(calendar._selectedUtcOffset).not.toBeDefined();
+
+                        calendar.$el.find('.openUtcControls').click();
+
+                        calendar.$el.find('.utcOffset').val('12').trigger('change');
+
+                        expect(calendar._selectedUtcOffset).toEqual(12);
+                    });
+
+                    it('triggers an onDateSelected event when the utc controls value changes', function(done){
+                        calendar.bind('onDateSelected', function(args){
+                            expect(args).toBeDefined();
+                            expect(args.date.format('YYYY-MM-DD')).toEqual('2012-05-24');
+                            expect(args.utcOffset).toEqual(-11);
+
+                            done();
+                        });
+
+                        calendar.$el.find('.openUtcControls').click();
+
+                        calendar.$el.find('.utcOffset').val('-11').trigger('change');
+                    });
+                });
+
+                describe('utcControls', function(){
+                    var calendar,
+                        utcControls,
+                        _getTimezoneUtcOffsetStub;
+
+
+                    beforeEach(function(){
+                        calendar = picker.startCalendar;
+
+                        _getTimezoneUtcOffsetStub = sinon.stub(calendar, '_getTimezoneUtcOffset').returns(0);
+
+                        calendar.$el.find('.openUtcControls').click();
+
+                        utcControls = calendar.$utcControls;
+                    });
+
+                    afterEach(function(){
+                        _getTimezoneUtcOffsetStub.restore();
+                        calendar = undefined;
+                    });
+
+                    it('renders the utc select', function(){
+                        var utcControlsSelect,
+                            utcControlsSelectOptions;
+
+                        utcControlsSelect = calendar.$utcControls.find('select.utcOffset');
+                        utcControlsSelectOptions = utcControlsSelect.children();
+
+                        expect(utcControlsSelect.length).toEqual(1);
+
+                        expect(utcControlsSelectOptions.length).toEqual(25);
+                        expect(utcControlsSelectOptions.eq(0).attr('value')).toEqual('-12');
+                        expect(utcControlsSelectOptions.eq(1).attr('value')).toEqual('-11');
+                        expect(utcControlsSelectOptions.eq(2).attr('value')).toEqual('-10');
+                        expect(utcControlsSelectOptions.eq(3).attr('value')).toEqual('-9');
+                        expect(utcControlsSelectOptions.eq(4).attr('value')).toEqual('-8');
+                        expect(utcControlsSelectOptions.eq(5).attr('value')).toEqual('-7');
+                        expect(utcControlsSelectOptions.eq(6).attr('value')).toEqual('-6');
+                        expect(utcControlsSelectOptions.eq(7).attr('value')).toEqual('-5');
+                        expect(utcControlsSelectOptions.eq(8).attr('value')).toEqual('-4');
+                        expect(utcControlsSelectOptions.eq(9).attr('value')).toEqual('-3');
+                        expect(utcControlsSelectOptions.eq(10).attr('value')).toEqual('-2');
+                        expect(utcControlsSelectOptions.eq(11).attr('value')).toEqual('-1');
+                        expect(utcControlsSelectOptions.eq(12).attr('value')).toEqual('0');
+                        expect(utcControlsSelectOptions.eq(13).attr('value')).toEqual('1');
+                        expect(utcControlsSelectOptions.eq(14).attr('value')).toEqual('2');
+                        expect(utcControlsSelectOptions.eq(15).attr('value')).toEqual('3');
+                        expect(utcControlsSelectOptions.eq(16).attr('value')).toEqual('4');
+                        expect(utcControlsSelectOptions.eq(17).attr('value')).toEqual('5');
+                        expect(utcControlsSelectOptions.eq(18).attr('value')).toEqual('6');
+                        expect(utcControlsSelectOptions.eq(19).attr('value')).toEqual('7');
+                        expect(utcControlsSelectOptions.eq(20).attr('value')).toEqual('8');
+                        expect(utcControlsSelectOptions.eq(21).attr('value')).toEqual('9');
+                        expect(utcControlsSelectOptions.eq(22).attr('value')).toEqual('10');
+                        expect(utcControlsSelectOptions.eq(23).attr('value')).toEqual('11');
+                        expect(utcControlsSelectOptions.eq(24).attr('value')).toEqual('12');
+                    });
+
+                    it('selects the correct utc offset when it is rendered', function(){
+                        expect(calendar.$utcControls.find('select.utcOffset').val()).toEqual('0');
+                    });
+                });
+            });
+
             describe('events', function(){
                 beforeEach(function(){
                     picker = daterangepicker.create({
@@ -401,7 +542,7 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.startCalendar.$el.find('.day[data-date="2012-12-01"]').click();
 
                     expect(spy.calledOnce).toEqual(true);
-                    expect(spy.args[0][0].startDate.toString()).toEqual(moment([2012,11,1]).toString());
+                    expect(spy.args[0][0].startDate.date.toString()).toEqual(moment([2012,11,1]).toString());
                 });
             });
 
@@ -452,8 +593,8 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.$el.find('.presets li').eq(0).click();
 
                     expect(spy.calledOnce).toEqual(true);
-                    expect(spy.args[0][0].startDate.toString()).toEqual(christmas2012.toString());
-                    expect(spy.args[0][0].endDate.toString()).toEqual(christmas2012.toString());
+                    expect(spy.args[0][0].startDate.date.toString()).toEqual(christmas2012.toString());
+                    expect(spy.args[0][0].endDate.date.toString()).toEqual(christmas2012.toString());
                 });
             });
         });
@@ -590,6 +731,36 @@ define(['lib/daterangepicker/daterangepicker'],
                 });
             });
 
+            describe('hiding', function(){
+                beforeEach(function(){
+                    picker = daterangepicker.create({
+                        showUtcOffset: true,
+                        startDate: '2012-05-24',
+                        endDate: '2013-06-01'
+                    });
+
+                    picker.render();
+
+                    picker.startCalendar.$el.find('.openUtcControls').click();
+                    picker.startCalendar.$el.find('.openUtcControls').click();
+                });
+
+                it('hides the start calendar utc controls when hide is called', function(){
+                    var startCalendarHideUtcControlsSpy = sinon.spy(picker.startCalendar, 'hideUtcControls');
+
+                    picker.hide();
+
+                    expect(startCalendarHideUtcControlsSpy.calledOnce).toEqual(true);
+                });
+                it('hides the end calendar utc controls when hide is called', function(){
+                    var endCalendarHideUtcControlsSpy = sinon.spy(picker.endCalendar, 'hideUtcControls');
+
+                    picker.hide();
+
+                    expect(endCalendarHideUtcControlsSpy.calledOnce).toEqual(true);
+                });
+            });
+
             describe('events', function(){
                 beforeEach(function(){
                     picker = daterangepicker.create({
@@ -639,7 +810,7 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.startCalendar.$el.find('.day[data-date="2012-12-01"]').click();
 
                     expect(spy.calledOnce).toEqual(true);
-                    expect(spy.args[0][0].startDate.toString()).toEqual(moment([2012,11,1]).toString());
+                    expect(spy.args[0][0].startDate.date.toString()).toEqual(moment([2012,11,1]).toString());
                 });
 
                 it('triggers a endDateSelected event when the endCalendar date changes', function(){
@@ -650,7 +821,7 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.endCalendar.$el.find('.day[data-date="2012-12-30"]').click();
 
                     expect(spy.calledOnce).toEqual(true);
-                    expect(spy.args[0][0].endDate.toString()).toEqual(moment([2012,11,30]).toString());
+                    expect(spy.args[0][0].endDate.date.toString()).toEqual(moment([2012,11,30]).toString());
                 });
             });
 
@@ -753,8 +924,8 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.$el.find('.presets li').eq(0).click();
 
                     expect(spy.calledOnce).toEqual(true);
-                    expect(spy.args[0][0].startDate.toString()).toEqual(christmas2012.toString());
-                    expect(spy.args[0][0].endDate.toString()).toEqual(christmas2012.toString());
+                    expect(spy.args[0][0].startDate.date.toString()).toEqual(christmas2012.toString());
+                    expect(spy.args[0][0].endDate.date.toString()).toEqual(christmas2012.toString());
                 });
             });
         });
