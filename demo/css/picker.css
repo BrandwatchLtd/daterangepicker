@@ -60,7 +60,48 @@ body {
 .picker td.grey{
     color: #CCC;
 }
-
+.picker .calendar-footer{
+    display:block;
+    width:100%;
+    box-sizing: border-box;
+    border-top: solid 1px #CCC;
+    padding: 6px 12px;
+    text-align: right;
+}
+.picker .calendar-footer button.done{
+    background-color: #4c9ef5;
+    background-image: linear-gradient(top, rgba(0, 0, 0, 0.0) 0%, rgba(0, 0, 0, 0.1) 100%);
+    background-image: -o-linear-gradient(top, rgba(0, 0, 0, 0.0) 0%, rgba(0, 0, 0, 0.1) 100%);
+    background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0.0) 0%, rgba(0, 0, 0, 0.1) 100%);
+    background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.0) 0%, rgba(0, 0, 0, 0.1) 100%);
+    background-image: -ms-linear-gradient(top, rgba(0, 0, 0, 0.0) 0%, rgba(0, 0, 0, 0.1) 100%);
+    color: #fff;
+    border: 1px solid #4892e0;
+    border-radius: 2px;
+    padding: 3px 12px;
+}
+}
+.picker .calendar-footer button.done:hover{
+    background-image: linear-gradient(top, rgba(0, 0, 0, 0.0) 0%, rgba(0, 0, 0, 0.1) 100%),
+                      linear-gradient(top, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.15) 100%);
+    background-image: -o-linear-gradient(top, rgba(0, 0, 0, 0.0) 0%, rgba(0, 0, 0, 0.1) 100%),
+                      -o-linear-gradient(top, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.15) 100%);
+    background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0.0) 0%, rgba(0, 0, 0, 0.1) 100%),
+                      -moz-linear-gradient(top, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.15) 100%);
+    background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.0) 0%, rgba(0, 0, 0, 0.1) 100%),
+                      -webkit-linear-gradient(top, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.15) 100%);
+    background-image: -ms-linear-gradient(top, rgba(0, 0, 0, 0.0) 0%, rgba(0, 0, 0, 0.1) 100%),
+                      -ms-linear-gradient(top, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.15) 100%);
+}
+.picker .calendar-footer button.done:active{
+    box-shadow: inset 0px 2px 6px rgba(0, 0, 0, 0.1);
+    background-image: linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.05) 100%);
+    background-image: -o-linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.05) 100%);
+    background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.05) 100%);
+    background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.05) 100%);
+    background-image: -ms-linear-gradient(top, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.05) 100%);
+    color: #eee;
+}
 .picker .presets-wrapper {
     display:table;
     overflow: auto;
