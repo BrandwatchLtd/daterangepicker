@@ -556,7 +556,9 @@ define(['lib/daterangepicker/daterangepicker'],
                     endCalendarRenderSpy;
 
                 beforeEach(function(){
-                    picker = daterangepicker.create();
+                    picker = daterangepicker.create({
+                        doneButtonCssClass: 'customDoneButtonCss'
+                    });
 
                     startCalendarRenderSpy = sinon.spy(picker.startCalendar, 'render');
                     endCalendarRenderSpy = sinon.spy(picker.endCalendar, 'render');
@@ -587,6 +589,13 @@ define(['lib/daterangepicker/daterangepicker'],
                 it('renders the correct label for the endCalendar', function(){
                     expect(picker.endCalendar.$el.find('.calendar-label').length).toEqual(1);
                     expect(picker.endCalendar.$el.find('.calendar-label').text()).toEqual('To');
+                });
+
+                it('renders the footer and done button', function(){
+                    var $footer = picker.$el.find('.calendar-footer');
+                    expect($footer.length).toEqual(1);
+                    expect($footer.find('button.done').length).toEqual(1);
+                    expect($footer.find('button.done').hasClass('customDoneButtonCss')).toEqual(true);
                 });
             });
 
@@ -651,6 +660,12 @@ define(['lib/daterangepicker/daterangepicker'],
 
                     expect(spy.calledOnce).toEqual(true);
                     expect(spy.args[0][0].endDate.toString()).toEqual(moment([2012,11,30]).toString());
+                });
+
+                it('hides picker when done button is clicked', function(){
+                    var hideSpy = sinon.spy(picker, 'hide');
+                    picker.$el.find('button.done').click();
+                    expect(hideSpy.calledOnce).toEqual(true);
                 });
             });
 
