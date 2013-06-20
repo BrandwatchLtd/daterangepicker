@@ -18,7 +18,11 @@ and open `http://localhost:8080/demo`
 Running the tests
 =================
 
-Pull down the repo then execute:
+Run
+    npm install testem -g
+    testem
+
+Or pull down the repo then execute:
 
     ./serve.sh
 
