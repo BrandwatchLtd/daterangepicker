@@ -662,6 +662,56 @@ define(['lib/daterangepicker/daterangepicker'],
                     expect(spy.args[0][0].endDate.toString()).toEqual(moment([2012,11,30]).toString());
                 });
 
+                it('triggers endDateSelected with corrected date when end date before start date', function(){
+                    var spy = sinon.spy();
+
+                    picker.bind('endDateSelected', spy);
+
+                    picker.endCalendar.$el.find('.day[data-date="2012-12-20"]').click();
+
+                    expect(spy.calledOnce).toEqual(true);
+                    expect(spy.args[0][0].startDate.toString()).toEqual(moment([2012,11,20]).toString());
+                    expect(spy.args[0][0].endDate.toString()).toEqual(moment([2012,11,20]).toString());
+                });
+
+                it('triggers startDateSelected with corrected date when start date after end date', function(){
+                    var spy = sinon.spy();
+
+                    picker.endCalendar.$el.find('.day[data-date="2012-12-30"]').click();
+
+                    picker.bind('startDateSelected', spy);
+
+                    picker.startCalendar.$el.find('.day[data-date="2012-12-31"]').click();
+
+                    expect(spy.calledOnce).toEqual(true);
+                    expect(spy.args[0][0].startDate.toString()).toEqual(moment([2012,11,31]).toString());
+                    expect(spy.args[0][0].endDate.toString()).toEqual(moment([2012,11,31]).toString());
+                });
+
+                it('does not trigger onDateSelected on the other calendar when fixing start date', function(){
+                    var dateSelectedEventStub = sinon.stub();
+
+                    picker.startCalendar.$el.find('.day[data-date="2012-12-31"]').click();
+
+                    picker.startCalendar.bind('onDateSelected', dateSelectedEventStub);
+
+                    picker.endCalendar.$el.find('.day[data-date="2012-12-30"]').click();
+
+                    expect(dateSelectedEventStub.callCount).toEqual(0);
+                });
+
+                it('does not trigger onDateSelected on the other calendar when fixing end date', function(){
+                    var dateSelectedEventStub = sinon.stub();
+
+                    picker.endCalendar.$el.find('.day[data-date="2012-12-30"]').click();
+
+                    picker.endCalendar.bind('onDateSelected', dateSelectedEventStub);
+
+                    picker.startCalendar.$el.find('.day[data-date="2012-12-31"]').click();
+
+                    expect(dateSelectedEventStub.callCount).toEqual(0);
+                });
+
                 it('hides picker when done button is clicked', function(){
                     var hideSpy = sinon.spy(picker, 'hide');
                     picker.$el.find('button.done').click();
