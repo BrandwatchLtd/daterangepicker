@@ -66,6 +66,22 @@ define(['lib/daterangepicker/daterangepicker'],
                     expect(calendar.$el.find('tr.week').length).toEqual(6);
                 });
 
+                it('renders the table with 6 "week" rows for months with 30 days that start on a Sunday', function(){
+                    calendar = picker._createCalendar({
+                        selectedDate: '2013-09-30',
+                    });
+                    calendar.render();
+                    expect(calendar.$el.find('tr.week').length).toEqual(6);
+                });
+
+                it('renders the table with 6 "week" rows for months with 31 days that start on a Saturday', function(){
+                    calendar = picker._createCalendar({
+                        selectedDate: '2011-10-31',
+                    });
+                    calendar.render();
+                    expect(calendar.$el.find('tr.week').length).toEqual(6);
+                });
+
                 it('renders the table with 42 "day" cells', function(){
                     expect(calendar.$el.find('td.day').length).toEqual(42);
                 });
