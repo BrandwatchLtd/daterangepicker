@@ -179,7 +179,7 @@ body {
     position: absolute;
     z-index: 9999;
     list-style: none;
-    height: 100px;
+    height: 90px;
     overflow-y: scroll;
     background: #fff;
     border: 1px solid #aaa;
