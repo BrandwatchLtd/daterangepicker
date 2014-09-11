@@ -179,22 +179,26 @@ body {
     position: absolute;
     z-index: 9999;
     list-style: none;
-    height: 90px;
+    height: 150px;
     overflow-y: scroll;
+    overflow-x: hidden;
     background: #fff;
     border: 1px solid #aaa;
     padding: 0;
-    margin: 2px 0 0 0;
+    margin: 0;
+    -webkit-user-select: none;  /* Chrome all / Safari all */
+    -moz-user-select: none;     /* Firefox all */
+    -ms-user-select: none;      /* IE 10+ */
 }
 
 .bw-time-picker li {
-    font-size: 13px;
-    padding: 2px 6px;
+    font-size: 12px;
+    padding: 1px 12px;
     cursor: pointer;
-    width: 50px;
+    width: 60px;
 }
 
-.bw-time-picker li:hover {
+.bw-time-picker li:hover, .bw-time-picker li.selected {
     background: #ddd;
     color: #333;
 }
