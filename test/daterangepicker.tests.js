@@ -886,7 +886,7 @@ define(['lib/daterangepicker/daterangepicker'],
             });
 
             describe('time picker html', function() {
-                it('should return a list of times separated by 30 minutes', function() {
+                it('should return a list of times separated by 30 minute intervals', function() {
                     var lis = [
                         '<li data-time="--:--">--:--</li>',
                         '<li data-time="00:30">00:30</li>',
@@ -1064,17 +1064,17 @@ define(['lib/daterangepicker/daterangepicker'],
                         timePickerHeight: 90,
                         selectedTimeHeight: 30,
                         currentTime: '06:00', // index 12
-                        expectedScrollAdjustment: 330 // (12 * 30) - 30
+                        expectedScrollAdjustment: 330 // difference between current and ideal positions
                     }, {
                         timePickerHeight: 90,
                         selectedTimeHeight: 30,
                         currentTime: '00:30', // index 1
-                        expectedScrollAdjustment: 0 // (1 * 30) - 30
+                        expectedScrollAdjustment: 0
                     }, {
                         timePickerHeight: 90,
                         selectedTimeHeight: 30,
                         currentTime: '19:00', // index 38
-                        expectedScrollAdjustment: 1110 // (38 * 30) - 30
+                        expectedScrollAdjustment: 1110
                     }];
 
 
