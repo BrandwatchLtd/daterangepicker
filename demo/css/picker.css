@@ -168,7 +168,7 @@ body {
 }
 
 
-.bw-time-picker {
+.time-picker {
     width: 92px;
 }
 
@@ -176,7 +176,7 @@ body {
     width: 80px;
 }
 
-.bw-time-picker {
+.time-picker {
     position: absolute;
     z-index: 99999;
     list-style: none;
@@ -193,7 +193,7 @@ body {
     user-select: none;
 }
 
-.bw-time-picker li {
+.time-picker li {
     font-size: 12px;
     padding: 1px 12px;
     cursor: pointer;
@@ -201,8 +201,8 @@ body {
     color: #333;
 }
 
-.bw-time-picker li:hover,
-.bw-time-picker li.selected {
+.time-picker li:hover,
+.time-picker li.selected {
     background: #ddd;
 }
 

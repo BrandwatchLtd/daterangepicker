@@ -868,8 +868,8 @@ define(['lib/daterangepicker/daterangepicker'],
             });
 
             it('renders the correct time picker label for each time picker', function() {
-                expect(picker.startCalendar.$el.find('.calendar-time-picker-label').text()).toEqual('at');
-                expect(picker.endCalendar.$el.find('.calendar-time-picker-label').text()).toEqual('at');
+                expect(picker.startCalendar.$el.find('.calendar-time-picker-label').text()).toEqual('At');
+                expect(picker.endCalendar.$el.find('.calendar-time-picker-label').text()).toEqual('At');
             });
 
             it('sets the time picker fields to "--:--" by default', function() {
@@ -948,10 +948,6 @@ define(['lib/daterangepicker/daterangepicker'],
                     $timeField = picker.startCalendar._getTimeField().click();
                 });
 
-                afterEach(function() {
-                    $('.bw-time-picker').remove();
-                });
-
                 it('shows a time picker for the start calendar', function() {
                     expect(picker.startCalendar.timePicker.$el.is(':visible')).toEqual(true);
                 });
@@ -971,10 +967,6 @@ define(['lib/daterangepicker/daterangepicker'],
             describe('when the end calendar time picker field is clicked', function() {
                 beforeEach(function() {
                     picker.endCalendar.$el.find('input[name="time"]').click();
-                });
-
-                afterEach(function() {
-                    $('.bw-time-picker').remove();
                 });
 
                 it('shows a time picker for the end calendar', function() {
@@ -1001,10 +993,6 @@ define(['lib/daterangepicker/daterangepicker'],
 
                     $timeField.click();
                     picker.startCalendar.timePicker.$el.find('[data-time="05:00"]').click();
-                });
-
-                afterEach(function() {
-                    $('.bw-time-picker').remove();
                 });
 
                 it('updates the time field to show the associated time', function() {
@@ -1111,7 +1099,7 @@ define(['lib/daterangepicker/daterangepicker'],
                             var $nearestPresetTime = timePicker.$el.find('[data-time="' + param.currentTime + '"]');
 
                             sandbox.stub(timePicker.$el, 'outerHeight').returns(param.timePickerHeight);
-                            sandbox.stub(timePicker, '_findListItemByTime').returns($nearestPresetTime);
+                            sandbox.stub(timePicker, '_findItemByTime').returns($nearestPresetTime);
 
                             $nearestPresetTime.outerHeight = sandbox.stub().returns(param.selectedTimeHeight);
 
