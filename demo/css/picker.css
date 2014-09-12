@@ -167,6 +167,7 @@ body {
           box-shadow: none;
 }
 
+
 .bw-time-picker {
     width: 92px;
 }
@@ -177,7 +178,7 @@ body {
 
 .bw-time-picker {
     position: absolute;
-    z-index: 9999;
+    z-index: 99999;
     list-style: none;
     height: 150px;
     overflow-y: scroll;
@@ -189,6 +190,7 @@ body {
     -webkit-user-select: none;  /* Chrome all / Safari all */
     -moz-user-select: none;     /* Firefox all */
     -ms-user-select: none;      /* IE 10+ */
+    user-select: none;
 }
 
 .bw-time-picker li {
@@ -196,11 +198,12 @@ body {
     padding: 1px 12px;
     cursor: pointer;
     width: 60px;
+    color: #333;
 }
 
-.bw-time-picker li:hover, .bw-time-picker li.selected {
+.bw-time-picker li:hover,
+.bw-time-picker li.selected {
     background: #ddd;
-    color: #333;
 }
 
 .picker .time-picker-row td {
