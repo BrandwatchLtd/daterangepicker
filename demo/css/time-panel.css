@@ -1,0 +1,47 @@
+.time-support, .time-support__panel-wrapper {
+    display: table;
+    width: 100%;
+    position: relative;
+}
+.time-support__panel-wrapper {
+    height: 0;
+}
+.time-support__panel-wrapper.isOpen {
+    height: auto;
+}
+.time-support__panel-wrapper .time-support__panel {
+    position: absolute;
+    display: none;
+}
+.time-support__panel-wrapper.isOpen .time-support__panel {
+    position: static;
+    display: table-cell;
+    padding: 6px 12px;
+    border-top: 1px solid #ccc;
+    display: table-cell;
+}
+.time-support__specify-time {
+    position: absolute;
+    top: 9px;
+    left: 12px;
+    margin: 0;
+}
+.time-support__specify-time input[name="specifyTime"] {
+    margin: 0;
+}
+.time-support__panel:nth-of-type(1) {
+    border-right: 1px solid #ccc;
+    text-align: right;
+}
+.time-support__field {
+    width: 70px;
+    vertical-align: baseline;
+    margin: 0;
+    border: 1px solid #aaa;
+    padding: 2px 4px;
+}
+.time-support__field.invalid-time {
+    border-color: #BF8983;
+    background-color: #FDEAE8;
+    color: #8A0A0A;
+}

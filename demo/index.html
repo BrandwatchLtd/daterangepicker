@@ -4,11 +4,15 @@
         <title>DateRangePicker demos</title>
         <link href="css/bootstrap.css" type="text/css" rel="stylesheet" />
         <link href="css/picker.css" type="text/css" rel="stylesheet" />
+        <link href="css/time-panel.css" type="text/css" rel="stylesheet" />
+        <link href="css/time-picker.css" type="text/css" rel="stylesheet" />
 
         <script src="lib/jquery-1.7.1.js"></script>
         <script src="lib/underscore.js"></script>
         <script src="lib/moment.js"></script>
+        <script src="/bower_components/timepicker/lib/timepicker/timepicker.js"></script>
         <script src="/lib/daterangepicker/daterangepicker.js"></script>
+        <script src="/lib/daterangepicker/daterangepicker.timesupport.js"></script>
 
         <style>
             .demo {
@@ -71,6 +75,43 @@
                             'last seven days': {
                                 startDate: sevenDaysAgoStr,
                                 endDate: todayStr
+                            }
+                        }
+                    });
+                </script>
+            </div>
+
+            <div id="timeSupport" class="demo">
+                <h2>Time Support</h2>
+                <p>A datepicker instantiated with the time support plugin which allows you to set the time (and presets)</p>
+                <input id="date4"></input>
+                <div id="picker4"/>
+
+                <script>
+                    $('#date4').daterangepicker({
+                        plugins: [daterangepicker.timeSupport],
+                        presets: {
+                            'Last hour': {
+                                startDate: today.clone().subtract('hours', 1).format('HH:mm YYYY-MM-DD'),
+                                endDate: today.format('HH:mm YYYY-MM-DD')
+                            },
+                            'Last 6 hours': {
+                                startDate: today.clone().subtract('hours', 6).format('HH:mm YYYY-MM-DD'),
+                                endDate: today.format('HH:mm YYYY-MM-DD')
+                            },
+                            'Last 24 Hours': {
+                                startDate: today.clone().subtract('hours', 24).format('HH:mm YYYY-MM-DD'),
+                                endDate: today.format('HH:mm YYYY-MM-DD')
+                            },
+                        },
+                        dateFormatter: function (startDate, endDate) {
+                            var picker = $('#date4').data('picker'),
+                                specifyTime = picker.$el.find('[name=specifyTime]').prop('checked');
+
+                            if (specifyTime) {
+                                return startDate.format('MMM DD, HH:mm') + ' - ' + endDate.format('MMM DD, HH:mm');
+                            } else {
+                                return startDate.format('DD MMM YYYY') + ' - ' + endDate.format('DD MMM YYYY');
                             }
                         }
                     });

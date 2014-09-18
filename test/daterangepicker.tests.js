@@ -139,7 +139,7 @@ define(['lib/daterangepicker/daterangepicker'],
                     expect(picker.$el.find('.close .testClass').length).toEqual(1);
                 });
 
-                it('triggers a "render" event after rendering', function() {
+                it('triggers a "render" event on the daterangepicker', function() {
                     picker = daterangepicker.create();
 
                     sinon.spy(picker, 'trigger');
