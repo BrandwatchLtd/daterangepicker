@@ -138,6 +138,17 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.render();
                     expect(picker.$el.find('.close .testClass').length).toEqual(1);
                 });
+
+                it('triggers a "render" event after rendering', function() {
+                    picker = daterangepicker.create();
+
+                    sinon.spy(picker, 'trigger');
+
+                    picker.render();
+
+                    expect(picker.trigger.calledOnce).toEqual(true);
+                    expect(picker.trigger.calledWith('render')).toEqual(true);
+                });
             });
 
             describe('events', function(){
@@ -951,5 +962,65 @@ define(['lib/daterangepicker/daterangepicker'],
             });
         });
 
+        describe('plugin support', function(){
+            it('can be created with plugins', function(){
+                function TestPlugin(options){
+                    this.options = options;
+                }
+                TestPlugin.pluginName = 'testPlugin';
+                TestPlugin.prototype.attach = sinon.spy();
+
+                picker = daterangepicker.create({
+                    plugins: [TestPlugin],
+                    testPlugin: {
+                        property1: true
+                    }
+                });
+
+                expect(picker.testPlugin).toBeDefined();
+                expect(TestPlugin.prototype.attach.calledOnce).toEqual(true);
+                expect(TestPlugin.prototype.attach.args[0][0]).toEqual(picker);
+                expect(picker.testPlugin.options).toEqual({property1: true});
+            });
+
+            it('can add plugins', function(){
+                picker = daterangepicker.create();
+
+                function TestPlugin(options){
+                    this.options = options;
+                }
+                TestPlugin.pluginName = 'testPlugin';
+                TestPlugin.prototype.attach = sinon.spy();
+
+                picker.addPlugin(TestPlugin, {config: 'value'});
+
+                expect(picker.testPlugin).toBeDefined();
+                expect(picker.testPlugin.options).toEqual({config: 'value'});
+                expect(TestPlugin.prototype.attach.calledOnce).toEqual(true);
+                expect(TestPlugin.prototype.attach.args[0][0]).toEqual(picker);
+            });
+
+            it('properly disposes of plugins on destroy', function(){
+                var attachSpy = sinon.spy(),
+                    detachSpy = sinon.spy();
+
+                picker = daterangepicker.create({
+                    plugins: [
+                        _.extend(function TestPlugin(){
+                            return {attach: attachSpy, detach: detachSpy};
+                        }, {pluginName: 'test'})
+                    ]
+                });
+
+                expect(picker._plugins).toEqual(['test']);
+                expect(picker.test).toEqual({attach: attachSpy, detach: detachSpy});
+
+                picker.destroy();
+
+                expect(attachSpy.calledOnce).toEqual(true);
+                expect(detachSpy.calledOnce).toEqual(true);
+                expect(picker._plugins.length).toEqual(0);
+            });
+        });
     });
 });
