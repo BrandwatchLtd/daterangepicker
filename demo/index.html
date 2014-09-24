@@ -19,6 +19,15 @@
                 margin:40px 0;
             }
         </style>
+
+        <script>
+            var today = moment(),
+                todayStr = today.format('YYYY-MM-DD'),
+                yesterday = today.clone().subtract('days', 1),
+                yesterdayStr = yesterday.format('YYYY-MM-DD'),
+                sevenDaysAgoStr = today.clone().subtract('days', 6).format('YYYY-MM-DD');
+
+        </script>
     </head>
     <body>
         <div class="container">
@@ -35,55 +44,9 @@
                 </script>
             </div>
 
-            <div id="presetRange" class="demo">
-                <h2>Preset Date Range</h2>
-                <p>A datepicker instantiated with a start and end date</p>
-                <input id="date2"></input>
-                <div id="picker2"/>
-
-                <script>
-                    $('#date2').daterangepicker({
-                        startDate: '2012-12-24',
-                        endDate: '2012-12-31'
-                    });
-                </script>
-            </div>
-
-            <div id="datePresets" class="demo">
-                <h2>Preset Dates</h2>
-                <p>A datepicker instantiated with a list of preset date ranges</p>
-                <input id="date3"></input>
-                <div id="picker3"/>
-
-                <script>
-                    var today = moment(),
-                        todayStr = today.format('YYYY-MM-DD'),
-                        yesterday = today.clone().subtract('days', 1),
-                        yesterdayStr = yesterday.format('YYYY-MM-DD'),
-                        sevenDaysAgoStr = today.clone().subtract('days', 6).format('YYYY-MM-DD');
-
-                    $('#date3').daterangepicker({
-                        presets: {
-                            today: {
-                                startDate: todayStr,
-                                endDate: todayStr
-                            },
-                            yesterday: {
-                                startDate: yesterdayStr,
-                                endDate: yesterdayStr
-                            },
-                            'last seven days': {
-                                startDate: sevenDaysAgoStr,
-                                endDate: todayStr
-                            }
-                        }
-                    });
-                </script>
-            </div>
-
             <div id="timeSupport" class="demo">
                 <h2>Time Support</h2>
-                <p>A datepicker instantiated with the time support plugin which allows you to set the time (and presets)</p>
+                <p>A datepicker instantiated with the time support plugin which allows you to specify time</p>
                 <input id="date4"></input>
                 <div id="picker4"/>
 
@@ -109,7 +72,7 @@
                                 specifyTime = picker.$el.find('[name=specifyTime]').prop('checked');
 
                             if (specifyTime) {
-                                return startDate.format('MMM DD, HH:mm') + ' - ' + endDate.format('MMM DD, HH:mm');
+                                return startDate.format('DD MMM YYYY, HH:mm') + ' - ' + endDate.format('DD MMM YYYY, HH:mm');
                             } else {
                                 return startDate.format('DD MMM YYYY') + ' - ' + endDate.format('DD MMM YYYY');
                             }
@@ -117,6 +80,49 @@
                     });
                 </script>
             </div>
+
+
+            <div id="presetRange" class="demo">
+                <h2>Preset Date Range</h2>
+                <p>A datepicker instantiated with a start and end date</p>
+                <input id="date2"></input>
+                <div id="picker2"/>
+
+                <script>
+                    $('#date2').daterangepicker({
+                        startDate: '2012-12-24',
+                        endDate: '2012-12-31'
+                    });
+                </script>
+            </div>
+
+            <div id="datePresets" class="demo">
+                <h2>Preset Dates</h2>
+                <p>A datepicker instantiated with a list of preset date ranges</p>
+                <input id="date3"></input>
+                <div id="picker3"/>
+
+                <script>
+
+                    $('#date3').daterangepicker({
+                        presets: {
+                            today: {
+                                startDate: todayStr,
+                                endDate: todayStr
+                            },
+                            yesterday: {
+                                startDate: yesterdayStr,
+                                endDate: yesterdayStr
+                            },
+                            'last seven days': {
+                                startDate: sevenDaysAgoStr,
+                                endDate: todayStr
+                            }
+                        }
+                    });
+                </script>
+            </div>
+
         </div>
     </body>
 </html>
