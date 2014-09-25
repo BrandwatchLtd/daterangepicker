@@ -271,33 +271,35 @@ define([
         describe('as a jquery plugin', function(){
             var input,
                 picker,
+                $startTime,
+                $endTime,
                 endDateSelectedSpy,
-                startDateSelectedSpy,
-                christmas2012Str = moment([2012,11,25]).format('YYYY-MM-DD'),
-                nye2012Str = moment([2012,11,31]).format('YYYY-MM-DD');
+                startDateSelectedSpy;
 
             beforeEach(function(){
                 input = $('<input id="pickerInput"/>');
                 $('#testArea').append(input);
 
                 input.daterangepicker({
-                    zIndex: 1234,
-                    startDate: '2013-01-01',
-                    endDate: '2013-02-14',
-                    presets: {
-                        'christmas 2012': {
-                            startDate: christmas2012Str,
-                            endDate: christmas2012Str
-                        },
-                        'new years eve 2012': {
-                            startDate: nye2012Str,
-                            endDate: nye2012Str
+                    startDate: '2014-09-01',
+                    endDate: '2014-09-07',
+                    plugins: [timesupport],
+                    dateFormatter: function (startDate, endDate) {
+                        var picker = input.data('picker'),
+                            specifyTime = picker.$el.find('[name=specifyTime]').prop('checked');
+
+                        if (specifyTime) {
+                            return startDate.format('DD MMM YYYY, HH:mm') + ' - ' + endDate.format('DD MMM YYYY, HH:mm');
+                        } else {
+                            return startDate.format('DD MMM YYYY') + ' - ' + endDate.format('DD MMM YYYY');
                         }
-                    },
-                    plugins: [timesupport]
+                    }
                 });
 
                 picker = input.data('picker');
+
+                $startTime = picker.$el.find('.time-support__field').eq(0);
+                $endTime = picker.$el.find('.time-support__field').eq(1);
 
                 startDateSelectedSpy = sandbox.spy();
                 endDateSelectedSpy = sandbox.spy();
@@ -335,13 +337,67 @@ define([
                 });
 
                 it('sets the time to "00:00"', function() {
-                    expect(picker.$el.find('.time-support__field').eq(0).val()).toEqual('00:00');
-                    expect(picker.$el.find('.time-support__field').eq(1).val()).toEqual('00:00');
+                    expect($startTime.val()).toEqual('00:00');
+                    expect($endTime.val()).toEqual('00:00');
                 });
 
                 it('does not trigger "onStartDateSelected" or "onEndDateSelected" when setting the default time', function() {
                     expect(startDateSelectedSpy.called).toEqual(false);
                     expect(endDateSelectedSpy.called).toEqual(false);
+                });
+
+                describe('when a day is clicked', function() {
+                    beforeEach(function() {
+                        picker.startCalendar.$el.find('.day[data-date="2014-09-02"]').click();
+                    });
+
+                    it('updates the input field to show date and current time formatted using the dateFormatter', function() {
+                        expect(input.val()).toEqual('02 Sep 2014, 00:00 - 07 Sep 2014, 00:00');
+                    });
+                });
+
+                describe('when a time is entered before a day is clicked', function() {
+                    beforeEach(function() {
+                        $startTime.val('10:30').trigger('change');
+                        $endTime.val('04:30').trigger('change');
+
+                        picker.startCalendar.$el.find('.day[data-date="2014-09-02"]').click();
+                        picker.endCalendar.$el.find('.day[data-date="2014-09-05"]').click();
+                    });
+
+                    it('updates the input field to show date and current time formatted using the dateFormatter', function() {
+                        expect(input.val()).toEqual('02 Sep 2014, 10:30 - 05 Sep 2014, 04:30');
+                    });
+                });
+
+                describe('when the end date selected is earler than the start date and time', function() {
+                    beforeEach(function() {
+                        $startTime.val('10:30').trigger('change');
+                        $endTime.val('04:30').trigger('change');
+
+                        picker.startCalendar.$el.find('.day[data-date="2014-09-02"]').click();
+                        picker.endCalendar.$el.find('.day[data-date="2014-09-02"]').click();
+                    });
+
+                    it('sets the start time to be the same as the end time', function() {
+                        expect($startTime.val()).toEqual('04:30');
+                        expect($endTime.val()).toEqual('04:30');
+                    });
+                });
+
+                describe('when the start date selected is later than the end date and time', function() {
+                    beforeEach(function() {
+                        $startTime.val('10:30').trigger('change');
+                        $endTime.val('04:30').trigger('change');
+
+                        picker.endCalendar.$el.find('.day[data-date="2014-09-02"]').click();
+                        picker.startCalendar.$el.find('.day[data-date="2014-09-03"]').click();
+                    });
+
+                    it('sets the end time to be the same as the start time', function() {
+                        expect($startTime.val()).toEqual('10:30');
+                        expect($endTime.val()).toEqual('10:30');
+                    });
                 });
             });
 
