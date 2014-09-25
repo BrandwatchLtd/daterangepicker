@@ -45,33 +45,65 @@ define([
             });
         });
 
-        describe('validation', function() {
+        describe('isValidTime', function() {
+            var i,
+                validTimes = ['00:00', '10:20', '02:30'],
+                invalidTimes = ['0000', '   10:20', '12:  23', '2:30', '23 : 45', '10:20   ', '24:00', '23:59:59', '', '  ', '23:1d', '23::00', '2pm', '12am', '0'];
+
+            beforeEach(function() {
+                picker = daterangepicker.create({
+                    plugins: [timesupport]
+                });
+            });
+
+            function testTimeValidity(time, isValid) {
+                var description = 'should be ' + ((isValid) ? 'valid' : 'invalid');
+
+                describe(time, function() {
+                    it(description, function() {
+                        picker.timeSupport.startPanel.setTime(time);
+
+                        expect(picker.timeSupport.startPanel.isValidTime()).toEqual(isValid);
+                    });
+                });
+            }
+
+            for (i = validTimes.length - 1; i >= 0; i--) {
+                testTimeValidity(validTimes[i], true);
+            }
+
+            for (i = invalidTimes.length - 1; i >= 0; i--) {
+                testTimeValidity(invalidTimes[i], false);
+            }
+        });
+
+        describe('input validation indicator', function() {
+            var $input;
+
             beforeEach(function() {
                 picker = daterangepicker.create({
                     plugins: [timesupport]
                 });
 
                 picker.render();
+
+                $input = picker.$el.find('input[name="time"]').first();
             });
 
             describe('when the value is invalid', function() {
-                var $input;
-
-                beforeEach(function() {
-                    $input = picker.$el.find('input[name="time"]').first();
+                it('adds the class "invalid-time" when the value is not a valid time', function() {
                     $input.val('9999').trigger('change');
+                    expect($input.hasClass('invalid-time')).toEqual(true);
                 });
 
-                it('adds the class "invalid-time" on change', function() {
+                it('adds the class "invalid-time" when the value is empty', function() {
+                    $input.val('').trigger('change');
                     expect($input.hasClass('invalid-time')).toEqual(true);
                 });
             });
 
             describe('when the value is valid', function() {
-                var $input;
-
                 beforeEach(function() {
-                    $input = picker.$el.find('input[name="time"]').first();
                     $input.val('20:10').trigger('change');
                 });
 
@@ -82,20 +114,6 @@ define([
                 it('updates the calendar selected date', function() {
                     expect(picker.startCalendar.selectedDate.hours()).toEqual(20);
                     expect(picker.startCalendar.selectedDate.minutes()).toEqual(10);
-                });
-            });
-
-            describe('when the field is emptied after an invalid entry', function() {
-                var $input;
-
-                beforeEach(function() {
-                    $input = picker.$el.find('input[name="time"]').first();
-                    $input.val('9999').trigger('change');
-                    $input.val('').trigger('change');
-                });
-
-                it('removes the class "invalid-time" on change', function() {
-                    expect($input.hasClass('invalid-time')).toEqual(false);
                 });
             });
         });
@@ -195,8 +213,8 @@ define([
                     plugins: [timesupport],
                     presets: {
                         'last hour': {
-                            startDate: moment([2014,9,1,10,0]).format('YYYY-MM-DDTHH:mm'),
-                            endDate: moment([2014,9,1,11,0]).format('YYYY-MM-DDTHH:mm')
+                            startDate: moment([2014, 9, 1, 10, 0]).format('YYYY-MM-DDTHH:mm'),
+                            endDate: moment([2014, 9, 1, 11, 0]).format('YYYY-MM-DDTHH:mm')
                         }
                     },
                 });
@@ -268,7 +286,7 @@ define([
             });
         });
 
-        describe('as a jquery plugin', function(){
+        describe('as a jquery plugin', function() {
             var input,
                 picker,
                 $startTime,
@@ -276,7 +294,7 @@ define([
                 endDateSelectedSpy,
                 startDateSelectedSpy;
 
-            beforeEach(function(){
+            beforeEach(function() {
                 input = $('<input id="pickerInput"/>');
                 $('#testArea').append(input);
 
@@ -284,7 +302,7 @@ define([
                     startDate: '2014-09-01',
                     endDate: '2014-09-07',
                     plugins: [timesupport],
-                    dateFormatter: function (startDate, endDate) {
+                    dateFormatter: function(startDate, endDate) {
                         var picker = input.data('picker'),
                             specifyTime = picker.$el.find('[name=specifyTime]').prop('checked');
 
@@ -310,7 +328,7 @@ define([
                 input.trigger('click');
             });
 
-            afterEach(function(){
+            afterEach(function() {
                 input.data('picker').destroy();
                 $('#testArea').empty();
             });
@@ -397,6 +415,43 @@ define([
                     it('sets the end time to be the same as the start time', function() {
                         expect($startTime.val()).toEqual('10:30');
                         expect($endTime.val()).toEqual('10:30');
+                    });
+                });
+
+                describe('after a time as been selected', function() {
+                    beforeEach(function() {
+                        $startTime.val('10:30').trigger('change');
+                        $endTime.val('04:30').trigger('change');
+                    });
+
+                    describe('when specify time is unchecked', function() {
+                        beforeEach(function() {
+                            picker.$el.find('[name=specifyTime]').prop('checked', true).trigger('click');
+                        });
+
+                        it('updates the input field to show the date only', function() {
+                            expect(input.val()).toEqual('01 Sep 2014 - 07 Sep 2014');
+                        });
+
+                        it('empties the start and end time fields', function() {
+                            expect($startTime.val()).toEqual('');
+                            expect($endTime.val()).toEqual('');
+                        });
+
+                        describe('when specify time is checked again', function() {
+                            beforeEach(function() {
+                                picker.$el.find('[name=specifyTime]').prop('checked', false).trigger('click');
+                            });
+
+                            it('resets the time fields to "00:00"', function() {
+                                expect($startTime.val()).toEqual('00:00');
+                                expect($endTime.val()).toEqual('00:00');
+                            });
+
+                            it('resets the input to show the correct date and time', function() {
+                                expect(input.val()).toEqual('01 Sep 2014, 00:00 - 07 Sep 2014, 00:00');
+                            });
+                        });
                     });
                 });
             });
