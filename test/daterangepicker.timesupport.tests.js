@@ -7,9 +7,16 @@ define([
     var DateRangePicker = daterangepicker.DateRangePicker;
 
     describe('time support plugin', function() {
-        var picker;
+        var picker,
+            sandbox;
+
+        beforeEach(function() {
+            sandbox = sinon.sandbox.create();
+        });
 
         afterEach(function() {
+            sandbox.restore();
+
             if (picker) {
                 picker.destroy();
                 picker = undefined;
@@ -264,6 +271,8 @@ define([
         describe('as a jquery plugin', function(){
             var input,
                 picker,
+                endDateSelectedSpy,
+                startDateSelectedSpy,
                 christmas2012Str = moment([2012,11,25]).format('YYYY-MM-DD'),
                 nye2012Str = moment([2012,11,31]).format('YYYY-MM-DD');
 
@@ -290,6 +299,12 @@ define([
 
                 picker = input.data('picker');
 
+                startDateSelectedSpy = sandbox.spy();
+                endDateSelectedSpy = sandbox.spy();
+
+                picker.bind('startDateSelected', startDateSelectedSpy);
+                picker.bind('endDateSelected', endDateSelectedSpy);
+
                 input.trigger('click');
             });
 
@@ -306,16 +321,42 @@ define([
                 expect(picker.$el.find('.time-support__specify-time').is(':visible')).toEqual(true);
             });
 
-            it('adds the class "isOpen" when the specify time checkbox is checked', function() {
-                picker.$el.find('[name=specifyTime]').prop('checked', false).trigger('click');
+            describe('when the specify time checkbox is checked', function() {
+                beforeEach(function() {
+                    picker.$el.find('[name=specifyTime]').prop('checked', false).trigger('click');
+                });
 
-                expect(picker.$el.find('.time-support__panel-wrapper').hasClass('isOpen')).toEqual(true);
+                it('adds the class "isOpen" to the panel wrapper', function() {
+                    expect(picker.$el.find('.time-support__panel-wrapper').hasClass('isOpen')).toEqual(true);
+                });
+
+                it('shows the panel wrapper', function() {
+                    expect(picker.$el.find('.time-support__panel-wrapper').is(':visible')).toEqual(true);
+                });
+
+                it('sets the time to "00:00"', function() {
+                    expect(picker.$el.find('.time-support__field').eq(0).val()).toEqual('00:00');
+                    expect(picker.$el.find('.time-support__field').eq(1).val()).toEqual('00:00');
+                });
+
+                it('does not trigger "onStartDateSelected" or "onEndDateSelected" when setting the default time', function() {
+                    expect(startDateSelectedSpy.called).toEqual(false);
+                    expect(endDateSelectedSpy.called).toEqual(false);
+                });
             });
 
-            it('removes the class "isOpen" when the specify time checkbox is unchecked', function() {
-                picker.$el.find('[name=specifyTime]').prop('checked', true).trigger('click');
+            describe('when the specify time checkbox is unchecked', function() {
+                beforeEach(function() {
+                    picker.$el.find('[name=specifyTime]').prop('checked', true).trigger('click');
+                });
 
-                expect(picker.$el.find('.time-support__panel-wrapper').hasClass('isOpen')).toEqual(false);
+                it('removes the class "isOpen" from the panel wrapper', function() {
+                    expect(picker.$el.find('.time-support__panel-wrapper').hasClass('isOpen')).toEqual(false);
+                });
+
+                it('hides the panel wrapper', function() {
+                    expect(picker.$el.find('.time-support__panel-wrapper').is(':visible')).toEqual(false);
+                });
             });
         });
     });
