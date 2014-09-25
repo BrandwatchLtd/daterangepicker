@@ -433,11 +433,6 @@ define([
                             expect(input.val()).toEqual('01 Sep 2014 - 07 Sep 2014');
                         });
 
-                        it('empties the start and end time fields', function() {
-                            expect($startTime.val()).toEqual('');
-                            expect($endTime.val()).toEqual('');
-                        });
-
                         describe('when specify time is checked again', function() {
                             beforeEach(function() {
                                 picker.$el.find('[name=specifyTime]').prop('checked', false).trigger('click');
@@ -448,7 +443,7 @@ define([
                                 expect($endTime.val()).toEqual('00:00');
                             });
 
-                            it('resets the input to show the correct date and time', function() {
+                            it('resets the input to show the date and default', function() {
                                 expect(input.val()).toEqual('01 Sep 2014, 00:00 - 07 Sep 2014, 00:00');
                             });
                         });

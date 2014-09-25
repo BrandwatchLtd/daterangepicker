@@ -960,6 +960,17 @@ define(['lib/daterangepicker/daterangepicker'],
 
                 expect(input.val()).toEqual('25 Dec 2012 - 25 Dec 2012');
             });
+
+            it('updates the target element when a "refresh" event is triggered', function(){
+                var picker = input.data('picker');
+
+                picker.trigger('refresh', {
+                    startDate: moment([2014, 10, 12]),
+                    endDate: moment([2014, 11, 12])
+                });
+
+                expect(input.val()).toEqual('12 Nov 2014 - 12 Dec 2014');
+            });
         });
 
         describe('plugin support', function(){
