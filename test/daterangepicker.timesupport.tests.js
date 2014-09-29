@@ -303,6 +303,28 @@ define([
             });
         });
 
+        describe('updating the calendar date', function() {
+            beforeEach(function() {
+                picker = daterangepicker.create({
+                    plugins: [timesupport]
+                });
+
+                picker.render();
+
+                picker.timeSupport.detach(picker);
+
+                sandbox.spy(picker.startCalendar, 'updateSelectedDate');
+            });
+
+            it('updates the calenar date to use utc', function() {
+                sandbox.stub(picker.timeSupport.startPanel, 'getTime').returns(moment('10:00', 'HH:mm'));
+
+                picker.timeSupport.startPanel.updateCalendarDate();
+
+                expect(picker.startCalendar.updateSelectedDate.args[0][0]._isUTC).toEqual(true);
+            });
+        });
+
         describe('as a jquery plugin', function() {
             var input,
                 picker,

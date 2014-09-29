@@ -21,7 +21,7 @@
         </style>
 
         <script>
-            var today = moment(),
+            var today = moment().utc(),
                 todayStr = today.format('YYYY-MM-DD'),
                 yesterday = today.clone().subtract('days', 1),
                 yesterdayStr = yesterday.format('YYYY-MM-DD'),
