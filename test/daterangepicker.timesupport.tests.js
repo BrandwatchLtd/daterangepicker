@@ -214,7 +214,12 @@ define([
                     presets: {
                         'last hour': {
                             startDate: moment([2014, 9, 1, 10, 0]).format('YYYY-MM-DDTHH:mm'),
-                            endDate: moment([2014, 9, 1, 11, 0]).format('YYYY-MM-DDTHH:mm')
+                            endDate: moment([2014, 9, 1, 11, 0]).format('YYYY-MM-DDTHH:mm'),
+                            specifyTime: true
+                        },
+                        '7d': {
+                            startDate: moment([2014, 9, 1, 10, 0]).format('YYYY-MM-DDTHH:mm'),
+                            endDate: moment([2014, 9, 1, 17, 0]).format('YYYY-MM-DDTHH:mm')
                         }
                     },
                 });
@@ -262,6 +267,18 @@ define([
                     expect($startTime.val()).toEqual('10:00');
                     expect($endTime.val()).toEqual('11:00');
                     expect(picker.trigger.calledWith('presetSelected')).toEqual(true);
+                });
+
+                it('opens the time support panel if the event args.specifyTime is true', function() {
+                    expect(picker.$el.find('input[name="specifyTime"]').prop('checked')).toEqual(true);
+                    expect(picker.$el.find('.time-support__panel-wrapper').hasClass('isOpen')).toEqual(true);
+                });
+
+                it('closes the time support panel if the event args.specifyTime is false', function() {
+                    picker.$el.find('.presets li').eq(1).click();
+
+                    expect(picker.$el.find('input[name="specifyTime"]').prop('checked')).toEqual(false);
+                    expect(picker.$el.find('.time-support__panel-wrapper').hasClass('isOpen')).toEqual(false);
                 });
             });
         });
