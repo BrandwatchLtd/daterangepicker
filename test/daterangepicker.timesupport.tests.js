@@ -222,6 +222,8 @@ define([
                             endDate: moment([2014, 9, 1, 17, 0]).format('YYYY-MM-DDTHH:mm')
                         }
                     },
+                    startDate: '2014-10-1',
+                    endDate: '2014-10-1'
                 });
 
                 picker.render();
@@ -235,7 +237,6 @@ define([
             describe('when startDateSelected is triggered on the daterangepicker', function() {
                 beforeEach(function() {
                     $startTime.val('12:00').trigger('change');
-                    picker.startCalendar.$el.find('.day[data-date="2014-9-19"]').click();
                 });
 
                 it('updates the time fields to show the new date', function() {
@@ -243,18 +244,29 @@ define([
                     expect($endTime.val()).toEqual('12:00');
                     expect(picker.trigger.calledWith('startDateSelected')).toEqual(true);
                 });
+
+                it('updates the calendars selectedDate', function() {
+                    expect(picker.startCalendar.selectedDate.format('YYYY-MM-DDTHH:mm')).toEqual('2014-10-01T12:00');
+                    expect(picker.endCalendar.selectedDate.format('YYYY-MM-DDTHH:mm')).toEqual('2014-10-01T12:00');
+                });
             });
 
             describe('when endDateSelected is triggered on the daterangepicker', function() {
                 beforeEach(function() {
                     $endTime.val('12:00').trigger('change');
                     picker.endCalendar.$el.find('.day[data-date="2014-9-19"]').click();
+                    picker.startCalendar.$el.find('.day[data-date="2014-9-19"]').click();
                 });
 
                 it('updates the time fields to show the new date', function() {
                     expect($startTime.val()).toEqual('00:00');
                     expect($endTime.val()).toEqual('12:00');
                     expect(picker.trigger.calledWith('endDateSelected')).toEqual(true);
+                });
+
+                it('updates the calendars selectedDate', function() {
+                    expect(picker.startCalendar.selectedDate.format('YYYY-MM-DDTHH:mm')).toEqual('2014-10-01T00:00');
+                    expect(picker.endCalendar.selectedDate.format('YYYY-MM-DDTHH:mm')).toEqual('2014-10-01T12:00');
                 });
             });
 
@@ -279,6 +291,11 @@ define([
 
                     expect(picker.$el.find('input[name="specifyTime"]').prop('checked')).toEqual(false);
                     expect(picker.$el.find('.time-support__panel-wrapper').hasClass('isOpen')).toEqual(false);
+                });
+
+                it('updates the calendars selectedDate', function() {
+                    expect(picker.startCalendar.selectedDate.format('YYYY-MM-DDTHH:mm')).toEqual('2014-10-01T10:00');
+                    expect(picker.endCalendar.selectedDate.format('YYYY-MM-DDTHH:mm')).toEqual('2014-10-01T11:00');
                 });
             });
         });
