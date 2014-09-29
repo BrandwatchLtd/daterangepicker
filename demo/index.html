@@ -54,18 +54,28 @@
                     $('#date4').daterangepicker({
                         plugins: [daterangepicker.timeSupport],
                         presets: {
-                            'Last hour': {
+                            '1hr': {
                                 startDate: today.clone().subtract('hours', 1).format('HH:mm YYYY-MM-DD'),
-                                endDate: today.format('HH:mm YYYY-MM-DD')
+                                endDate: today.format('HH:mm YYYY-MM-DD'),
+                                specifyTime: true
                             },
-                            'Last 6 hours': {
+                            '6hr': {
                                 startDate: today.clone().subtract('hours', 6).format('HH:mm YYYY-MM-DD'),
-                                endDate: today.format('HH:mm YYYY-MM-DD')
+                                endDate: today.format('HH:mm YYYY-MM-DD'),
+                                specifyTime: true
                             },
-                            'Last 24 Hours': {
-                                startDate: today.clone().subtract('hours', 24).format('HH:mm YYYY-MM-DD'),
-                                endDate: today.format('HH:mm YYYY-MM-DD')
+                            today: {
+                                startDate: todayStr,
+                                endDate: todayStr
                             },
+                            yesterday: {
+                                startDate: yesterdayStr,
+                                endDate: yesterdayStr
+                            },
+                            'last seven days': {
+                                startDate: sevenDaysAgoStr,
+                                endDate: todayStr
+                            }
                         },
                         dateFormatter: function (startDate, endDate) {
                             var picker = $('#date4').data('picker'),
