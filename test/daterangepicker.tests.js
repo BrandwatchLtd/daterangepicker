@@ -440,7 +440,8 @@ define(['lib/daterangepicker/daterangepicker'],
                                 startDate: christmas2012Str
                             },
                             'new years eve 2012': {
-                                startDate: nye2012Str
+                                startDate: nye2012Str,
+                                specifyTime: true
                             }
                         },
                         singleDate: true
@@ -481,6 +482,34 @@ define(['lib/daterangepicker/daterangepicker'],
                     expect(spy.calledOnce).toEqual(true);
                     expect(spy.args[0][0].startDate.toString()).toEqual(christmas2012.toString());
                     expect(spy.args[0][0].endDate.toString()).toEqual(christmas2012.toString());
+                });
+
+                it('passes specifyTime as true if set to true on the preset', function() {
+                    var spy = sinon.spy(),
+                        nye2012Str = moment([2012,11,31]);
+
+                    picker.bind('presetSelected', spy);
+
+                    picker.$el.find('.presets li').eq(1).click();
+
+                    expect(spy.calledOnce).toEqual(true);
+                    expect(spy.args[0][0].startDate.toString()).toEqual(nye2012Str.toString());
+                    expect(spy.args[0][0].endDate.toString()).toEqual(nye2012Str.toString());
+                    expect(spy.args[0][0].specifyTime).toEqual(true);
+                });
+
+                it('passes specifyTime as false if set to false on the preset', function() {
+                    var spy = sinon.spy(),
+                        christmas2012 = moment([2012,11,25]);
+
+                    picker.bind('presetSelected', spy);
+
+                    picker.$el.find('.presets li').eq(0).click();
+
+                    expect(spy.calledOnce).toEqual(true);
+                    expect(spy.args[0][0].startDate.toString()).toEqual(christmas2012.toString());
+                    expect(spy.args[0][0].endDate.toString()).toEqual(christmas2012.toString());
+                    expect(spy.args[0][0].specifyTime).toEqual(false);
                 });
             });
         });
@@ -807,7 +836,8 @@ define(['lib/daterangepicker/daterangepicker'],
                             },
                             'new years eve 2012': {
                                 startDate: nye2012Str,
-                                endDate: nye2012Str
+                                endDate: nye2012Str,
+                                specifyTime: true
                             }
                         }
                     });
@@ -821,10 +851,12 @@ define(['lib/daterangepicker/daterangepicker'],
                     expect(picker.$el.find('.presets li').eq(0).text()).toEqual('christmas 2012');
                     expect(picker.$el.find('.presets li').eq(0).data('startdate')).toEqual('2012-12-25');
                     expect(picker.$el.find('.presets li').eq(0).data('enddate')).toEqual('2012-12-25');
+                    expect(picker.$el.find('.presets li').eq(0).data('time')).toEqual(false);
 
                     expect(picker.$el.find('.presets li').eq(1).text()).toEqual('new years eve 2012');
                     expect(picker.$el.find('.presets li').eq(1).data('startdate')).toEqual('2012-12-31');
                     expect(picker.$el.find('.presets li').eq(1).data('enddate')).toEqual('2012-12-31');
+                    expect(picker.$el.find('.presets li').eq(1).data('time')).toEqual(true);
                 });
 
                 it('selects the corresponding date range when a preset is clicked', function(){
