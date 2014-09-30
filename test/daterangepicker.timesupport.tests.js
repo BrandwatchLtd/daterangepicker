@@ -378,7 +378,7 @@ define([
 
             describe('when the specify time checkbox is checked', function() {
                 beforeEach(function() {
-                    picker.$el.find('[name=specifyTime]').prop('checked', false).trigger('click');
+                    picker.$el.find('[name=specifyTime]').prop('checked', true).trigger('change');
                 });
 
                 it('adds the class "isOpen" to the panel wrapper', function() {
@@ -461,7 +461,7 @@ define([
 
                     describe('when specify time is unchecked', function() {
                         beforeEach(function() {
-                            picker.$el.find('[name=specifyTime]').prop('checked', true).trigger('click');
+                            picker.$el.find('[name=specifyTime]').prop('checked', false).trigger('change');
                         });
 
                         it('updates the input field to show the date only', function() {
@@ -470,7 +470,7 @@ define([
 
                         describe('when specify time is checked again', function() {
                             beforeEach(function() {
-                                picker.$el.find('[name=specifyTime]').prop('checked', false).trigger('click');
+                                picker.$el.find('[name=specifyTime]').prop('checked', true).trigger('change');
                             });
 
                             it('resets the time fields to "00:00"', function() {
@@ -488,7 +488,7 @@ define([
 
             describe('when the specify time checkbox is unchecked', function() {
                 beforeEach(function() {
-                    picker.$el.find('[name=specifyTime]').prop('checked', true).trigger('click');
+                    picker.$el.find('[name=specifyTime]').prop('checked', false).trigger('change');
                 });
 
                 it('removes the class "isOpen" from the panel wrapper', function() {
