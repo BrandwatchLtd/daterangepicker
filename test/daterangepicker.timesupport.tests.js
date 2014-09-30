@@ -429,7 +429,7 @@ define([
                         $endTime.val('04:30').trigger('change');
 
                         picker.startCalendar.$el.find('.day[data-date="2014-09-02"]').click();
-                        picker.endCalendar.$el.find('.day[data-date="2014-09-02"]').click();
+                        picker.endCalendar.$el.find('.day[data-date="2014-09-01"]').click();
                     });
 
                     it('sets the start time to be the same as the end time', function() {
