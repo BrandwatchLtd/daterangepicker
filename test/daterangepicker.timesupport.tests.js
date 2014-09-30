@@ -87,6 +87,8 @@ define([
 
                 picker.render();
 
+                sandbox.spy(picker.startCalendar, 'updateSelectedDate');
+
                 $input = picker.$el.find('input[name="time"]').first();
             });
 
@@ -99,6 +101,11 @@ define([
                 it('adds the class "invalid-time" when the value is empty', function() {
                     $input.val('').trigger('change');
                     expect($input.hasClass('invalid-time')).toEqual(true);
+                });
+
+                it('does not update the calendar selectedDate', function() {
+                    $input.val('4567').trigger('change');
+                    expect(picker.startCalendar.updateSelectedDate.called).toEqual(false);
                 });
             });
 
@@ -172,34 +179,6 @@ define([
 
                 it('correctly highlights the calendar cells', function() {
                     expect(picker.startCalendar.$el.find('.inRange').length).toEqual(0);
-                });
-            });
-
-            describe('when a start time is later than the end time', function() {
-                beforeEach(function() {
-                    picker.startCalendar.$el.find('.day[data-date="2014-9-19"]').click();
-                    picker.endCalendar.$el.find('.day[data-date="2014-9-19"]').click();
-
-                    $endTime.val('10:00').trigger('change');
-                    $startTime.val('14:20').trigger('change');
-                });
-
-                it('changes the end time to match the start time', function() {
-                    expect($endTime.val()).toEqual('14:20');
-                });
-            });
-
-            describe('when an end time is earlier than the start time', function() {
-                beforeEach(function() {
-                    picker.startCalendar.$el.find('.day[data-date="2014-9-19"]').click();
-                    picker.endCalendar.$el.find('.day[data-date="2014-9-19"]').click();
-
-                    $startTime.val('14:20').trigger('change');
-                    $endTime.val('10:00').trigger('change');
-                });
-
-                it('changes the start time to match the end time', function() {
-                    expect($startTime.val()).toEqual('10:00');
                 });
             });
         });
