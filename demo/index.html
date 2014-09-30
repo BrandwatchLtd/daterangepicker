@@ -55,13 +55,13 @@
                         plugins: [daterangepicker.timeSupport],
                         presets: {
                             '1hr': {
-                                startDate: today.clone().subtract('hours', 1).format('HH:mm YYYY-MM-DD'),
-                                endDate: today.format('HH:mm YYYY-MM-DD'),
+                                startDate: today.clone().subtract('hours', 1).format('YYYY-MM-DDTHH:mm'),
+                                endDate: today.format('YYYY-MM-DDTHH:mm'),
                                 specifyTime: true
                             },
                             '6hr': {
-                                startDate: today.clone().subtract('hours', 6).format('HH:mm YYYY-MM-DD'),
-                                endDate: today.format('HH:mm YYYY-MM-DD'),
+                                startDate: today.clone().subtract('hours', 6).format('YYYY-MM-DDTHH:mm'),
+                                endDate: today.format('YYYY-MM-DDTHH:mm'),
                                 specifyTime: true
                             },
                             today: {
