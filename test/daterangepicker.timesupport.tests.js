@@ -222,8 +222,8 @@ define([
                             endDate: moment([2014, 9, 1, 17, 0]).format('YYYY-MM-DDTHH:mm')
                         }
                     },
-                    startDate: '2014-10-1',
-                    endDate: '2014-10-1'
+                    startDate: '2014-10-01',
+                    endDate: '2014-10-01'
                 });
 
                 picker.render();
@@ -333,7 +333,7 @@ define([
                 sandbox.spy(picker.startCalendar, 'updateSelectedDate');
             });
 
-            it('updates the calenar date to use utc', function() {
+            it('updates the calendar date to use utc', function() {
                 sandbox.stub(picker.timeSupport.startPanel, 'getTime').returns(moment('10:00', 'HH:mm'));
 
                 picker.timeSupport.startPanel.updateCalendarDate();
@@ -444,7 +444,7 @@ define([
                     });
                 });
 
-                describe('when the end date selected is earler than the start date and time', function() {
+                describe('when the end date selected is earlier than the start date and time', function() {
                     beforeEach(function() {
                         $startTime.val('10:30').trigger('change');
                         $endTime.val('04:30').trigger('change');
@@ -474,7 +474,7 @@ define([
                     });
                 });
 
-                describe('after a time as been selected', function() {
+                describe('after a time has been selected', function() {
                     beforeEach(function() {
                         $startTime.val('10:30').trigger('change');
                         $endTime.val('04:30').trigger('change');
