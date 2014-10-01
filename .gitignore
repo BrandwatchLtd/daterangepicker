@@ -1,4 +1,4 @@
 node_modules/
-bower_components/
+vendor/
 daterangepicker.min.js
 libpeerconnection.log

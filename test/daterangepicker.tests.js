@@ -43,7 +43,7 @@ define(['lib/daterangepicker/daterangepicker'],
                 });
 
                 it('stores the selected month', function(){
-                    expect(calendar.monthToDisplay).toEqual(moment.utc([2012,11,1]));
+                    expect(calendar.monthToDisplay.toString()).toEqual(moment.utc([2012,11,1]).toString());
                 });
 
                 it('sets this.$el to be an empty div', function(){
@@ -247,7 +247,7 @@ define(['lib/daterangepicker/daterangepicker'],
                 it('updates this.monthToDisplay', function(){
                     calendar.showMonth(2010,0);
 
-                    expect(calendar.monthToDisplay).toEqual(moment.utc([2010,0]));
+                    expect(calendar.monthToDisplay.toString()).toEqual(moment.utc([2010,0]).toString());
                 });
 
                 it('re-renders', function(){
