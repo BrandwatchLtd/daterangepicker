@@ -12,7 +12,7 @@
 
         <style>
             .demo {
-                margin:40px 0;
+                margin: 40px 0;
             }
         </style>
     </head>
@@ -46,10 +46,24 @@
             </div>
 
             <div id="datePresets" class="demo">
-                <h2>Preset Dates</h2>
-                <p>A datepicker instantiated with a list of preset date ranges</p>
+                <h2>Time Picker</h2>
+                <p>A datepicker instantiated with a time picker</p>
                 <input id="date3"></input>
                 <div id="picker3"/>
+
+                <script>
+                    $('#date3').daterangepicker({
+                        timePicker: true
+                    });
+                </script>
+            </div>
+
+
+            <div id="datePresets" class="demo">
+                <h2>Preset Dates</h2>
+                <p>A datepicker instantiated with a list of preset date ranges</p>
+                <input id="date4"></input>
+                <div id="picker4"/>
 
                 <script>
                     var today = moment(),
@@ -58,7 +72,7 @@
                         yesterdayStr = yesterday.format('YYYY-MM-DD'),
                         sevenDaysAgoStr = today.clone().subtract('days', 6).format('YYYY-MM-DD');
 
-                    $('#date3').daterangepicker({
+                    $('#date4').daterangepicker({
                         presets: {
                             today: {
                                 startDate: todayStr,
@@ -76,6 +90,8 @@
                     });
                 </script>
             </div>
+
+
         </div>
     </body>
 </html>

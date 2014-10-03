@@ -155,3 +155,67 @@ body {
 .picker .endCalendar .calendar-label{
     background-color: #8D949C;
 }
+
+
+.picker input[name="time"], .picker input[name="time"]:focus {
+    padding: 2px 6px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+  -webkit-box-shadow: none;
+     -moz-box-shadow: none;
+          box-shadow: none;
+}
+
+
+.time-picker {
+    width: 92px;
+}
+
+.picker input[name="time"] {
+    width: 80px;
+}
+
+.time-picker {
+    position: absolute;
+    z-index: 99999;
+    list-style: none;
+    height: 150px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    background: #fff;
+    border: 1px solid #aaa;
+    padding: 0;
+    margin: 0;
+    -webkit-user-select: none;  /* Chrome all / Safari all */
+    -moz-user-select: none;     /* Firefox all */
+    -ms-user-select: none;      /* IE 10+ */
+    user-select: none;
+}
+
+.time-picker li {
+    font-size: 12px;
+    padding: 1px 12px;
+    cursor: pointer;
+    width: 60px;
+    color: #333;
+}
+
+.time-picker li:hover,
+.time-picker li.selected {
+    background: #ddd;
+}
+
+.picker .time-picker-row td {
+    padding: 6px 12px;
+    border-top: 1px solid #ccc;
+}
+
+.picker .time-picker-row input {
+    vertical-align: baseline;
+    margin: 0;
+}
+
+.startCalendar .time-picker-row td {
+    text-align: right;
+}

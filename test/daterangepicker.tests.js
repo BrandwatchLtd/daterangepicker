@@ -7,7 +7,8 @@ define(['lib/daterangepicker/daterangepicker'],
     describe('daterangepicker', function(){
         var picker,
             christmas2012Str = moment([2012,11,25]).format('YYYY-MM-DD'),
-            nye2012Str = moment([2012,11,31]).format('YYYY-MM-DD');
+            nye2012Str = moment([2012,11,31]).format('YYYY-MM-DD'),
+            sandbox = sinon.sandbox.create();
 
 
         afterEach(function(){
@@ -15,6 +16,7 @@ define(['lib/daterangepicker/daterangepicker'],
                 picker.destroy();
                 picker = undefined;
             }
+            sandbox.restore();
         });
 
         describe('a datepicker calendar', function(){
@@ -840,6 +842,470 @@ define(['lib/daterangepicker/daterangepicker'],
             });
         });
 
+        describe('with time picker', function() {
+            beforeEach(function() {
+                picker = daterangepicker.create({
+                    timePicker: true,
+                    startDate: '2014-01-01',
+                    endDate: '2014-01-01'
+                });
+
+                picker.render();
+            });
+
+            it('creates a time picker for each calendar', function() {
+                var startPicker = picker.startCalendar.timePicker.$el.get(0),
+                    endPicker = picker.endCalendar.timePicker.$el.get(0);
+                expect(startPicker === endPicker).toEqual(false);
+            });
+
+            it('renders a time picker field for each calendar', function() {
+                expect(picker.startCalendar.$el.find('.time-picker-row').length).toEqual(1);
+                expect(picker.startCalendar._getTimeField().length).toEqual(1);
+
+                expect(picker.endCalendar.$el.find('.time-picker-row').length).toEqual(1);
+                expect(picker.endCalendar.$el.find('input[name="time"]').length).toEqual(1);
+            });
+
+            it('renders the correct time picker label for each time picker', function() {
+                expect(picker.startCalendar.$el.find('.calendar-time-picker-label').text()).toEqual('At');
+                expect(picker.endCalendar.$el.find('.calendar-time-picker-label').text()).toEqual('At');
+            });
+
+            it('sets the time picker fields to "--:--" by default', function() {
+                expect(picker.startCalendar._getTimeField().val()).toEqual('--:--');
+                expect(picker.endCalendar.$el.find('input[name="time"]').val()).toEqual('--:--');
+            });
+
+            it('sets the time picker fields to "--:--" if just a date is selected', function() {
+                picker.startCalendar.$el.find('.day').first().click();
+                picker.endCalendar.$el.find('.day').first().click();
+
+                expect(picker.startCalendar._getTimeField().val()).toEqual('--:--');
+                expect(picker.endCalendar.$el.find('input[name="time"]').val()).toEqual('--:--');
+            });
+
+            describe('time picker html', function() {
+                it('should return a list of times separated by 30 minute intervals', function() {
+                    var lis = [
+                        '<li data-time="--:--">--:--</li>',
+                        '<li data-time="00:30">00:30</li>',
+                        '<li data-time="01:00">01:00</li>',
+                        '<li data-time="01:30">01:30</li>',
+                        '<li data-time="02:00">02:00</li>',
+                        '<li data-time="02:30">02:30</li>',
+                        '<li data-time="03:00">03:00</li>',
+                        '<li data-time="03:30">03:30</li>',
+                        '<li data-time="04:00">04:00</li>',
+                        '<li data-time="04:30">04:30</li>',
+                        '<li data-time="05:00">05:00</li>',
+                        '<li data-time="05:30">05:30</li>',
+                        '<li data-time="06:00">06:00</li>',
+                        '<li data-time="06:30">06:30</li>',
+                        '<li data-time="07:00">07:00</li>',
+                        '<li data-time="07:30">07:30</li>',
+                        '<li data-time="08:00">08:00</li>',
+                        '<li data-time="08:30">08:30</li>',
+                        '<li data-time="09:00">09:00</li>',
+                        '<li data-time="09:30">09:30</li>',
+                        '<li data-time="10:00">10:00</li>',
+                        '<li data-time="10:30">10:30</li>',
+                        '<li data-time="11:00">11:00</li>',
+                        '<li data-time="11:30">11:30</li>',
+                        '<li data-time="12:00">12:00</li>',
+                        '<li data-time="12:30">12:30</li>',
+                        '<li data-time="13:00">13:00</li>',
+                        '<li data-time="13:30">13:30</li>',
+                        '<li data-time="14:00">14:00</li>',
+                        '<li data-time="14:30">14:30</li>',
+                        '<li data-time="15:00">15:00</li>',
+                        '<li data-time="15:30">15:30</li>',
+                        '<li data-time="16:00">16:00</li>',
+                        '<li data-time="16:30">16:30</li>',
+                        '<li data-time="17:00">17:00</li>',
+                        '<li data-time="17:30">17:30</li>',
+                        '<li data-time="18:00">18:00</li>',
+                        '<li data-time="18:30">18:30</li>',
+                        '<li data-time="19:00">19:00</li>',
+                        '<li data-time="19:30">19:30</li>',
+                        '<li data-time="20:00">20:00</li>',
+                        '<li data-time="20:30">20:30</li>',
+                        '<li data-time="21:00">21:00</li>',
+                        '<li data-time="21:30">21:30</li>',
+                        '<li data-time="22:00">22:00</li>',
+                        '<li data-time="22:30">22:30</li>',
+                        '<li data-time="23:00">23:00</li>',
+                        '<li data-time="23:30">23:30</li>'
+                    ];
+                    expect(picker.startCalendar.timePicker.$el.html()).toEqual(lis.join(''));
+                });
+            });
+
+            describe('when the start calendar time picker field is clicked', function() {
+                var $timeField;
+
+                beforeEach(function() {
+                    $timeField = picker.startCalendar._getTimeField().click();
+                });
+
+                it('shows a time picker for the start calendar', function() {
+                    expect(picker.startCalendar.timePicker.$el.is(':visible')).toEqual(true);
+                });
+
+                describe('when the end calendar time picker field is clicked while the start time picker is open', function() {
+                    beforeEach(function() {
+                        picker.endCalendar.$el.find('input[name="time"]').click();
+                    });
+
+                    it('hides the start calendar time picker and shows the end calendar time picker', function() {
+                        expect(picker.startCalendar.timePicker.$el.is(':visible')).toEqual(false);
+                        expect(picker.endCalendar.timePicker.$el.is(':visible')).toEqual(true);
+                    });
+                });
+            });
+
+            describe('when the end calendar time picker field is clicked', function() {
+                beforeEach(function() {
+                    picker.endCalendar.$el.find('input[name="time"]').click();
+                });
+
+                it('shows a time picker for the end calendar', function() {
+                    expect(picker.endCalendar.timePicker.$el.is(':visible')).toEqual(true);
+                });
+
+                describe('when the start calendar time picker field is clicked while the end time picker is open', function() {
+                    beforeEach(function() {
+                        picker.startCalendar._getTimeField().click();
+                    });
+
+                    it('hides the start calendar time picker and shows the end calendar time picker', function() {
+                        expect(picker.startCalendar.timePicker.$el.is(':visible')).toEqual(true);
+                        expect(picker.endCalendar.timePicker.$el.is(':visible')).toEqual(false);
+                    });
+                });
+            });
+
+            describe('when a time is clicked on the time picker', function() {
+                var $timeField;
+
+                beforeEach(function() {
+                    $timeField = picker.startCalendar._getTimeField();
+
+                    $timeField.click();
+                    picker.startCalendar.timePicker.$el.find('[data-time="05:00"]').click();
+                });
+
+                it('updates the time field to show the associated time', function() {
+                    expect(picker.startCalendar._getTimeField().val()).toEqual('05:00');
+                });
+
+                it('closes the time picker', function() {
+                    expect(picker.startCalendar.timePicker.$el.is(':visible')).toEqual(false);
+                });
+
+                describe('when the time picker field looses then regains focus', function() {
+                    beforeEach(function() {
+                        $timeField.blur();
+                        $timeField.focus();
+                    });
+                    it('should open the time picker', function() {
+                        expect(picker.startCalendar.timePicker.$el.is(':visible')).toEqual(true);
+                    });
+                });
+
+                describe('when the time picker is reopened after a time has been picked', function() {
+                    beforeEach(function() {
+                        picker.startCalendar.timePicker.$el.hide();
+                        picker.startCalendar._getTimeField().click();
+                    });
+
+                    it('should show the last selected time highlighted', function() {
+                        var selectedTime = picker.startCalendar.timePicker.$el.find('[data-time="05:00"]');
+                        expect(selectedTime.hasClass('selected')).toEqual(true);
+                    });
+
+                    it('should remove the selected class if a different time is picked', function() {
+                        var selectedTime = picker.startCalendar.timePicker.$el.find('[data-time="06:00"]');
+                        selectedTime.click();
+
+                        expect(selectedTime.hasClass('selected')).toEqual(true);
+                        expect(picker.startCalendar.timePicker.$el.find('li.selected').length).toEqual(1);
+                    });
+
+                    it('should only highlight the last selected item not previously selected items', function() {
+                        picker.startCalendar.timePicker.$el.trigger('mouseenter');
+                        picker.startCalendar.timePicker.$el.find('[data-time="06:00"]').click();
+
+                        picker.startCalendar.timePicker.$el.trigger('mouseleave');
+                        expect(picker.startCalendar.timePicker.$el.find('li.selected').length).toEqual(1);
+                        expect(picker.startCalendar.timePicker.$el.find('[data-time="06:00"]').hasClass('selected')).toEqual(true);
+                    });
+                });
+
+                describe('when the end time is earlier than the start time', function() {
+                    beforeEach(function() {
+                        picker.endCalendar.$el.find('input[name="time"]').click();
+                        picker.endCalendar.timePicker.$el.find('[data-time="02:00"]').click();
+                    });
+
+                    it('should change and highlight the correct start time', function() {
+                        var selectedTime = picker.startCalendar.timePicker.$el.find('[data-time="02:00"]');
+
+                        expect(picker.startCalendar._getTimeField().val()).toEqual('02:00');
+                        expect(selectedTime.hasClass('selected')).toEqual(true);
+                    });
+                });
+            });
+
+            describe('when scrolling the time picker to show the current time', function() {
+                var timePicker,
+                    $timeField,
+                    params = [{
+                        timePickerHeight: 90,
+                        selectedTimeHeight: 30,
+                        currentTime: '06:00', // index 12
+                        expectedScrollAdjustment: 330 // difference between current and ideal positions
+                    }, {
+                        timePickerHeight: 90,
+                        selectedTimeHeight: 30,
+                        currentTime: '00:30', // index 1
+                        expectedScrollAdjustment: 0
+                    }, {
+                        timePickerHeight: 90,
+                        selectedTimeHeight: 30,
+                        currentTime: '19:00', // index 38
+                        expectedScrollAdjustment: 1110
+                    }];
+
+
+                beforeEach(function() {
+                    $timeField = picker.startCalendar._getTimeField();
+                    timePicker = picker.startCalendar.timePicker;
+
+                    timePicker.$el.css('position', 'relative'); // for $.position() to work
+
+                    sandbox.spy(timePicker.$el, 'scrollTop');
+                });
+
+                params.forEach(function(param) {
+                    var testDesc = '';
+
+                    testDesc += 'time picker height is ' + param.timePickerHeight + ', ';
+                    testDesc += 'list item height is ' + param.selectedTimeHeight + ', ';
+                    testDesc += 'and current time is ' + param.currentTime;
+
+                    describe('when ' + testDesc, function() {
+                        it('should scroll the time picker by ' + param.expectedScrollAdjustment + 'px', function() {
+                            var $nearestPresetTime = timePicker.$el.find('[data-time="' + param.currentTime + '"]');
+
+                            sandbox.stub(timePicker.$el, 'outerHeight').returns(param.timePickerHeight);
+                            sandbox.stub(timePicker, '_findItemByTime').returns($nearestPresetTime);
+
+                            $nearestPresetTime.outerHeight = sandbox.stub().returns(param.selectedTimeHeight);
+
+                            $timeField.val(param.currentTime).click();
+
+                            expect(timePicker.$el.scrollTop.args[0][0]).toEqual(param.expectedScrollAdjustment);
+                        });
+                    });
+                });
+            });
+
+            describe('when a custom time has been selected', function() {
+                var timePicker,
+                    $timeField,
+                    params = [{
+                        customTime: '05:10',
+                        presetTime: '05:00',
+                    }, {
+                        customTime: '05:20',
+                        presetTime: '05:30',
+                    }, {
+                        customTime: '05:45',
+                        presetTime: '06:00',
+                    }, {
+                        customTime: '05:38',
+                        presetTime: '05:30',
+                    }, {
+                        customTime: '05:53',
+                        presetTime: '06:00',
+                    }];
+
+                beforeEach(function() {
+                    $timeField = picker.startCalendar._getTimeField();
+                    timePicker = picker.startCalendar.timePicker;
+
+                    timePicker.$el.css({
+                        'position': 'relative',
+                        'height': 90
+                    });
+
+                    sandbox.spy(timePicker.$el, 'scrollTop');
+                });
+
+                params.forEach(function(param) {
+                    describe('when the custom time is ' + param.customTime, function() {
+                        var presetTimeScrollAdjustment,
+                            customTimeScrollAdjustment;
+
+                        it('should scroll the time picker as if the selected time was ' + param.presetTime, function() {
+                            $timeField.val(param.presetTime);
+                            $timeField.click();
+
+                            presetTimeScrollAdjustment = timePicker.$el.scrollTop.args[0][0];
+
+                            $timeField.blur();
+                            timePicker.$el.scrollTop.reset();
+
+                            $timeField.val(param.customTime);
+                            $timeField.click();
+
+                            customTimeScrollAdjustment = timePicker.$el.scrollTop.args[0][0];
+
+                            expect(presetTimeScrollAdjustment).toEqual(customTimeScrollAdjustment);
+                        });
+                    });
+                });
+            });
+
+
+            describe('when the mouse hovers over the time picker after a time has been selected', function() {
+                beforeEach(function() {
+                    picker.startCalendar._getTimeField().click();
+                    picker.startCalendar.timePicker.$el.find('[data-time="02:00"]').click();
+
+                    picker.startCalendar._getTimeField().click();
+                    picker.startCalendar.timePicker.$el.find('li').first().trigger('mouseenter');
+                });
+
+                it('should remove the highlight from the currently selected time by changing its class', function() {
+                    expect(picker.startCalendar.timePicker.$el.find('[data-time="02:00"]').hasClass('-selected')).toEqual(true);
+                });
+
+                it('should add the highlight when the mouse leaves the time picker', function() {
+                    picker.startCalendar.timePicker.$el.find('li').first().trigger('mouseleave');
+                    expect(picker.startCalendar.timePicker.$el.find('[data-time="02:00"]').hasClass('selected')).toEqual(true);
+                });
+            });
+
+            describe('when the datepicker is closed while a time picker is open', function() {
+                beforeEach(function() {
+                    picker.startCalendar._getTimeField().click();
+                    picker.$el.find('button.done').click();
+                });
+
+                it('should close the time picker', function() {
+                    expect(picker.startCalendar.timePicker.$el.is(':visible')).toEqual(false);
+                });
+            });
+
+            describe('when the time picker field gains focus', function() {
+                beforeEach(function() {
+                    picker.startCalendar._getTimeField().trigger('focus');
+                });
+
+                it('opens the time picker list', function() {
+                    expect(picker.startCalendar.timePicker.$el.is(':visible')).toEqual(true);
+                });
+            });
+
+            describe('when the time picker field looses focus while the time picker is open', function() {
+                var timePickerHideSpy,
+                    $timeField;
+
+                beforeEach(function() {
+                    $timeField = picker.startCalendar._getTimeField();
+                    timePickerHideSpy = sinon.spy(picker.startCalendar.timePicker.$el, 'hide');
+                    $timeField.click().blur();
+                });
+
+                afterEach(function() {
+                    timePickerHideSpy.reset();
+                });
+
+                it('should close the end calendar time picker', function() {
+                    expect(picker.startCalendar.timePicker.$el.is(':visible')).toEqual(false);
+                    expect(timePickerHideSpy.calledOnce).toEqual(true);
+                });
+            });
+
+            describe('when the time picker field looses focus while user is selecting a time', function() {
+                var timePickerHideSpy,
+                    $timeField;
+
+                beforeEach(function() {
+                    $timeField = picker.startCalendar._getTimeField();
+                    timePickerHideSpy = sinon.spy(picker.startCalendar.timePicker.$el, 'hide');
+
+                    $timeField.click();
+
+                    picker.startCalendar.timePicker.$el.find('li').first().trigger('mousedown');
+                });
+
+                afterEach(function() {
+                    timePickerHideSpy.reset();
+                });
+
+                describe('when the user has triggered mousedown on the time picker (e.g. after clicking a list item)', function() {
+                    it('should keep the time picker open', function() {
+                        $timeField.trigger('blur');
+
+                        expect(picker.startCalendar.timePicker.$el.is(':visible')).toEqual(true);
+                        expect(timePickerHideSpy.called).toEqual(false);
+                    });
+                });
+
+                describe('when the user has triggered mouseup on the time picker (e.g. after clicking scrollbar)', function() {
+                    it('should close the time picker', function() {
+                        picker.startCalendar.timePicker.$el.trigger('mouseup');
+
+                        $timeField.trigger('blur');
+
+                        expect(picker.startCalendar.timePicker.$el.is(':visible')).toEqual(false);
+                        expect(timePickerHideSpy.calledOnce).toEqual(true);
+                    });
+                });
+            });
+
+            describe('when a start time later than the end time is picked', function() {
+                beforeEach(function() {
+                    picker.startCalendar.$el.find('.day[data-date="2014-01-01"]').first().click();
+                    picker.endCalendar.$el.find('.day[data-date="2014-01-01"]').first().click();
+
+                    picker.endCalendar.$el.find('input[name="time"]').click();
+                    picker.endCalendar.timePicker.$el.find('[data-time="10:00"]').click();
+
+                    picker.startCalendar._getTimeField().click();
+                    picker.startCalendar.timePicker.$el.find('[data-time="18:00"]').click();
+                });
+
+
+                it('should set both time picker fields to the later time', function() {
+                    expect(picker.startCalendar._getTimeField().val()).toEqual('18:00');
+                    expect(picker.endCalendar.$el.find('input[name="time"]').val()).toEqual('18:00');
+                });
+            });
+
+            describe('when an end time earlier than the start time is picked', function() {
+                beforeEach(function() {
+                    picker.startCalendar.$el.find('.day[data-date="2014-01-01"]').first().click();
+                    picker.endCalendar.$el.find('.day[data-date="2014-01-01"]').first().click();
+
+                    picker.startCalendar._getTimeField().click();
+                    picker.startCalendar.timePicker.$el.find('[data-time="13:00"]').click();
+
+                    picker.endCalendar.$el.find('input[name="time"]').click();
+                    picker.endCalendar.timePicker.$el.find('[data-time="10:00"]').click();
+                });
+
+
+                it('should set both time picker fields to the earlier time', function() {
+                    expect(picker.startCalendar._getTimeField().val()).toEqual('10:00');
+                    expect(picker.endCalendar.$el.find('input[name="time"]').val()).toEqual('10:00');
+                });
+            });
+        });
+
         describe('as a jquery plugin', function(){
             var input,
                 christmas2012Str = moment([2012,11,25]).format('YYYY-MM-DD'),
@@ -951,5 +1417,155 @@ define(['lib/daterangepicker/daterangepicker'],
             });
         });
 
+        describe('as a jquery plugin with time picker support', function() {
+            var input, picker;
+
+            beforeEach(function() {
+                input = $('<input type="text" />');
+                $('#testArea').append(input);
+
+                input.daterangepicker({
+                    zIndex: 1234,
+                    startDate: '2013-01-01',
+                    endDate: '2013-02-14',
+                    timePicker: true
+                });
+                $('#testArea').append(input);
+
+                input.click();
+
+                picker = input.data('picker');
+            });
+
+            afterEach(function() {
+                input.data('picker').destroy();
+                $('#testArea').empty();
+            });
+
+            describe('when a time is not picked', function() {
+                beforeEach(function() {
+                    picker.startCalendar.$el.find('[data-date="2013-01-01"]').click();
+                    picker.endCalendar.$el.find('[data-date="2013-02-14"]').click();
+                });
+
+                it('updates the target element with the dates formatted without time', function() {
+                    expect(input.val()).toEqual('01 Jan 2013 - 14 Feb 2013');
+                    expect(picker.startCalendar._getTimeField().val()).toEqual('--:--');
+                    expect(picker.endCalendar.$el.find('input[name="time"]').val()).toEqual('--:--');
+                });
+            });
+
+
+            describe('when a time is picked', function() {
+                beforeEach(function() {
+                    picker.startCalendar.$el.find('[data-date="2013-01-01"]').click();
+                    picker.endCalendar.$el.find('[data-date="2013-02-14"]').click();
+
+                    picker.startCalendar._getTimeField().val('10:00').trigger('change');
+                    picker.endCalendar.$el.find('input[name="time"]').val('14:00').trigger('change');
+                });
+
+                it('updates the target element with the dates formatted with time', function() {
+                    expect(input.val()).toEqual('10:00 01 Jan 2013 - 14:00 14 Feb 2013');
+                });
+            });
+
+
+            describe('when the time from the start calendar is reset', function() {
+                beforeEach(function() {
+                    picker.startCalendar.$el.find('[data-date="2013-01-01"]').click();
+                    picker.endCalendar.$el.find('[data-date="2013-02-14"]').click();
+
+                    picker.startCalendar._getTimeField().val('10:00').trigger('change');
+                    picker.endCalendar.$el.find('input[name="time"]').val('14:00').trigger('change');
+
+                    picker.startCalendar._getTimeField().val('--:--').trigger('change');
+                });
+
+                it('updates the target element and formats the start date without time', function() {
+                    expect(input.val()).toEqual('01 Jan 2013 - 14:00 14 Feb 2013');
+                });
+            });
+
+            describe('when the time from the end calendar is reset', function() {
+                beforeEach(function() {
+                    picker.startCalendar.$el.find('[data-date="2013-01-01"]').click();
+                    picker.endCalendar.$el.find('[data-date="2013-02-14"]').click();
+
+                    picker.startCalendar._getTimeField().val('10:00').trigger('change');
+                    picker.endCalendar.$el.find('input[name="time"]').val('14:00').trigger('change');
+
+                    picker.endCalendar.$el.find('input[name="time"]').val('--:--').trigger('change');
+                });
+
+                it('updates the target element and formats the start date without time', function() {
+                    expect(input.val()).toEqual('10:00 01 Jan 2013 - 14 Feb 2013');
+                });
+            });
+
+            describe('when an invalid start time is entered', function() {
+                beforeEach(function() {
+                    picker.startCalendar.$el.find('[data-date="2013-01-01"]').click();
+                    picker.endCalendar.$el.find('[data-date="2013-02-14"]').click();
+
+                    picker.startCalendar._getTimeField().val('10:00').trigger('change');
+                    picker.endCalendar.$el.find('input[name="time"]').val('14:00').trigger('change');
+
+                    picker.startCalendar._getTimeField().val('A10:B00').trigger('change');
+                });
+
+                it('updates the target element and reverts to the previously valid date/time', function() {
+                    expect(input.val()).toEqual('10:00 01 Jan 2013 - 14:00 14 Feb 2013');
+                });
+            });
+
+            describe('when an invalid end time is entered', function() {
+                beforeEach(function() {
+                    picker.startCalendar.$el.find('[data-date="2013-01-01"]').click();
+                    picker.endCalendar.$el.find('[data-date="2013-02-14"]').click();
+
+                    picker.startCalendar._getTimeField().val('10:00').trigger('change');
+                    picker.endCalendar.$el.find('input[name="time"]').val('14:00').trigger('change');
+
+                    picker.endCalendar.$el.find('input[name="time"]').val('A14:B00').trigger('change');
+                });
+
+                it('updates the target element and reverts to the previously valid date/time', function() {
+                    expect(input.val()).toEqual('10:00 01 Jan 2013 - 14:00 14 Feb 2013');
+                });
+            });
+
+            describe('when the start time value is deleted', function() {
+                beforeEach(function() {
+                    picker.startCalendar.$el.find('[data-date="2013-01-01"]').click();
+                    picker.endCalendar.$el.find('[data-date="2013-02-14"]').click();
+
+                    picker.startCalendar._getTimeField().val('10:00').trigger('change');
+                    picker.endCalendar.$el.find('input[name="time"]').val('14:00').trigger('change');
+
+                    picker.startCalendar._getTimeField().val('').trigger('change');
+                });
+
+                it('updates the target element and formats the start date without time', function() {
+                    expect(input.val()).toEqual('01 Jan 2013 - 14:00 14 Feb 2013');
+                });
+            });
+
+            describe('when the end time value is deleted', function() {
+                beforeEach(function() {
+                    picker.startCalendar.$el.find('[data-date="2013-01-01"]').click();
+                    picker.endCalendar.$el.find('[data-date="2013-02-14"]').click();
+
+                    picker.startCalendar._getTimeField().val('10:00').trigger('change');
+                    picker.endCalendar.$el.find('input[name="time"]').val('14:00').trigger('change');
+
+                    picker.endCalendar.$el.find('input[name="time"]').val('').trigger('change');
+                });
+
+                it('updates the target element and formats the end date without time', function() {
+                    expect(input.val()).toEqual('10:00 01 Jan 2013 - 14 Feb 2013');
+                });
+            });
+        });
     });
 });
