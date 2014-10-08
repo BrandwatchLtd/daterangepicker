@@ -48,7 +48,11 @@ define([
         describe('plugin options', function() {
             describe('when specifyTimeChecked is true', function() {
                 beforeEach(function() {
+                    sandbox.useFakeTimers(new Date(Date.UTC(2013, 7, 1, 11, 0)).getTime());
+
                     picker = daterangepicker.create({
+                        startDate: moment().zone(120).toISOString(),
+                        endDate: moment().zone(120).add({'h': 2}).toISOString(),
                         plugins: [timesupport],
                         timeSupport: {
                             specifyTimeChecked: true
@@ -64,6 +68,11 @@ define([
 
                 it('opens the time support panel', function() {
                     expect(picker.$el.find('.time-support__panel-wrapper').hasClass('isOpen')).toEqual(true);
+                });
+
+                it('populates the time fields with UTC time', function() {
+                    expect(picker.timeSupport.startPanel.$input.val()).toEqual('11:00');
+                    expect(picker.timeSupport.endPanel.$input.val()).toEqual('13:00');
                 });
             });
 
