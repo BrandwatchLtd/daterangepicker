@@ -1,18 +1,21 @@
 .time-support,
-.time-support__panel-wrapper {
+.time-support__panel-wrapper.isOpen {
     display: table;
+}
+.time-support,
+.time-support__panel-wrapper {
     width: 100%;
     position: relative;
 }
 .time-support__panel-wrapper {
     height: 0;
+    display: none;
 }
 .time-support__panel-wrapper.isOpen {
     height: auto;
 }
 .time-support__panel-wrapper .time-support__panel {
     position: absolute;
-    display: none;
 }
 .time-support__panel-wrapper.isOpen .time-support__panel {
     position: relative;

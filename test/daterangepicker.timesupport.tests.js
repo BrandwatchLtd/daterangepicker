@@ -438,8 +438,8 @@ define([
                 $('#testArea').empty();
             });
 
-            it('hides the panel wrapper by default', function() {
-                expect(picker.$el.find('.time-support__panel-wrapper').is(':visible')).toEqual(false);
+            it('does not have the class isOpen by default', function() {
+                expect(picker.$el.find('.time-support__panel-wrapper').hasClass('isOpen')).toEqual(false);
             });
 
             it('shows the specify time checkbox by default', function() {
@@ -453,10 +453,6 @@ define([
 
                 it('adds the class "isOpen" to the panel wrapper', function() {
                     expect(picker.$el.find('.time-support__panel-wrapper').hasClass('isOpen')).toEqual(true);
-                });
-
-                it('shows the panel wrapper', function() {
-                    expect(picker.$el.find('.time-support__panel-wrapper').is(':visible')).toEqual(true);
                 });
 
                 it('sets the time to "00:00"', function() {
@@ -563,10 +559,6 @@ define([
 
                 it('removes the class "isOpen" from the panel wrapper', function() {
                     expect(picker.$el.find('.time-support__panel-wrapper').hasClass('isOpen')).toEqual(false);
-                });
-
-                it('hides the panel wrapper', function() {
-                    expect(picker.$el.find('.time-support__panel-wrapper').is(':visible')).toEqual(false);
                 });
             });
         });
