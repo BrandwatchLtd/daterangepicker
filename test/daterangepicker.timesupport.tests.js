@@ -45,6 +45,56 @@ define([
             });
         });
 
+        describe('plugin options', function() {
+            describe('when specifyTimeChecked is true', function() {
+                beforeEach(function() {
+                    picker = daterangepicker.create({
+                        plugins: [timesupport],
+                        timeSupport: {
+                            specifyTimeChecked: true
+                        }
+                    });
+
+                    picker.render();
+                });
+
+                it('the specifyTime checkbox should be checked', function() {
+                    expect(picker.$el.find('[name="specifyTime"]').prop('checked')).toEqual(true);
+                });
+            });
+
+            describe('when specifyTimeChecked is false', function() {
+                beforeEach(function() {
+                    picker = daterangepicker.create({
+                        plugins: [timesupport],
+                        timeSupport: {
+                            specifyTimeChecked: false
+                        }
+                    });
+
+                    picker.render();
+                });
+
+                it('the specifyTime checkbox should be unchecked', function() {
+                    expect(picker.$el.find('[name="specifyTime"]').prop('checked')).toEqual(false);
+                });
+            });
+
+            describe('when specifyTimeChecked is undefined', function() {
+                beforeEach(function() {
+                    picker = daterangepicker.create({
+                        plugins: [timesupport]
+                    });
+
+                    picker.render();
+                });
+
+                it('the specifyTime checkbox should be unchecked', function() {
+                    expect(picker.$el.find('[name="specifyTime"]').prop('checked')).toEqual(false);
+                });
+            });
+        });
+
         describe('isValidTime', function() {
             var i,
                 validTimes = ['00:00', '10:20', '02:30'],
