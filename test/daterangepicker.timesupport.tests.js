@@ -61,6 +61,10 @@ define([
                 it('the specifyTime checkbox should be checked', function() {
                     expect(picker.$el.find('[name="specifyTime"]').prop('checked')).toEqual(true);
                 });
+
+                it('opens the time support panel', function() {
+                    expect(picker.$el.find('.time-support__panel-wrapper').hasClass('isOpen')).toEqual(true);
+                });
             });
 
             describe('when specifyTimeChecked is false', function() {
@@ -78,6 +82,10 @@ define([
                 it('the specifyTime checkbox should be unchecked', function() {
                     expect(picker.$el.find('[name="specifyTime"]').prop('checked')).toEqual(false);
                 });
+
+                it('closes the time support panel', function() {
+                    expect(picker.$el.find('.time-support__panel-wrapper').hasClass('isOpen')).toEqual(false);
+                });
             });
 
             describe('when specifyTimeChecked is undefined', function() {
@@ -91,6 +99,9 @@ define([
 
                 it('the specifyTime checkbox should be unchecked', function() {
                     expect(picker.$el.find('[name="specifyTime"]').prop('checked')).toEqual(false);
+                });
+                it('closes the time support panel', function() {
+                    expect(picker.$el.find('.time-support__panel-wrapper').hasClass('isOpen')).toEqual(false);
                 });
             });
         });
