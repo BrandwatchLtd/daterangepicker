@@ -52,6 +52,8 @@
 
                 <script>
                     $('#date4').daterangepicker({
+                        startDate: moment().subtract({'h': 1}),
+                        endDate: moment(),
                         plugins: [daterangepicker.timeSupport],
                         presets: {
                             '1hr': {
