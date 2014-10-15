@@ -6,8 +6,8 @@ define(['lib/daterangepicker/daterangepicker'],
 
     describe('daterangepicker', function(){
         var picker,
-            christmas2012Str = moment([2012,11,25]).format('YYYY-MM-DD'),
-            nye2012Str = moment([2012,11,31]).format('YYYY-MM-DD');
+            christmas2012Str = moment.utc([2012,11,25]).format('YYYY-MM-DD'),
+            nye2012Str = moment.utc([2012,11,31]).format('YYYY-MM-DD');
 
 
         afterEach(function(){
@@ -39,11 +39,11 @@ define(['lib/daterangepicker/daterangepicker'],
 
             describe('initialization', function(){
                 it('stores the selected date', function(){
-                    expect(calendar.selectedDate.toString()).toEqual(moment([2012,11,25]).toString());
+                    expect(calendar.selectedDate.toString()).toEqual(moment.utc([2012,11,25]).toString());
                 });
 
                 it('stores the selected month', function(){
-                    expect(calendar.monthToDisplay).toEqual(moment([2012,11,1]));
+                    expect(calendar.monthToDisplay).toEqual(moment.utc([2012,11,1]));
                 });
 
                 it('sets this.$el to be an empty div', function(){
@@ -236,7 +236,7 @@ define(['lib/daterangepicker/daterangepicker'],
                 it('updates this.monthToDisplay', function(){
                     calendar.showMonth(2010,0);
 
-                    expect(calendar.monthToDisplay).toEqual(moment([2010,0]));
+                    expect(calendar.monthToDisplay).toEqual(moment.utc([2010,0]));
                 });
 
                 it('re-renders', function(){
@@ -254,8 +254,8 @@ define(['lib/daterangepicker/daterangepicker'],
                 });
 
                 it('highlights from the start to the end of the month if the end date is next month', function(){
-                    var startDate = moment([2012,11,30]),
-                        endDate = moment([2013,0,2]);
+                    var startDate = moment.utc([2012,11,30]),
+                        endDate = moment.utc([2013,0,2]);
 
                     calendar.highlightCells(startDate, endDate);
 
@@ -264,8 +264,8 @@ define(['lib/daterangepicker/daterangepicker'],
                 });
 
                 it('highlights from the end date to the start of the month if the start date is previous month', function(){
-                    var startDate = moment([2012,10,30]),
-                        endDate = moment([2012,11,2]);
+                    var startDate = moment.utc([2012,10,30]),
+                        endDate = moment.utc([2012,11,2]);
 
                     calendar.highlightCells(startDate, endDate);
 
@@ -274,8 +274,8 @@ define(['lib/daterangepicker/daterangepicker'],
                 });
 
                 it('highlights the range if both start and end are in the displayed month', function(){
-                    var startDate = moment([2012,11,24]),
-                        endDate = moment([2012,11,30]);
+                    var startDate = moment.utc([2012,11,24]),
+                        endDate = moment.utc([2012,11,30]);
 
                     calendar.highlightCells(startDate, endDate);
 
@@ -405,7 +405,7 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.startCalendar.trigger('onDateSelected', { date: '2012-12-01' });
 
                     expect(highlightRangeSpy.calledOnce).toEqual(true);
-                    expect(highlightRangeSpy.args[0][0].toString()).toEqual(moment([2012,11,1]).toString());
+                    expect(highlightRangeSpy.args[0][0].toString()).toEqual(moment.utc([2012,11,1]).toString());
                     expect(highlightRangeSpy.args[0][1].toString()).toEqual(picker.getEndDate().toString());
                 });
 
@@ -417,7 +417,7 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.startCalendar.$el.find('.day[data-date="2012-12-01"]').click();
 
                     expect(spy.calledOnce).toEqual(true);
-                    expect(spy.args[0][0].startDate.toString()).toEqual(moment([2012,11,1]).toString());
+                    expect(spy.args[0][0].startDate.toString()).toEqual(moment.utc([2012,11,1]).toString());
                 });
             });
 
@@ -451,7 +451,7 @@ define(['lib/daterangepicker/daterangepicker'],
                 });
 
                 it('selects the corresponding date when a preset is clicked', function(){
-                    var christmas2012 = moment([2012,11,25]);
+                    var christmas2012 = moment.utc([2012,11,25]);
 
                     picker.$el.find('.presets li').eq(0).click();
 
@@ -461,7 +461,7 @@ define(['lib/daterangepicker/daterangepicker'],
 
                 it('triggers a presetSelected event when a preset is chosen', function(){
                     var spy = sinon.spy(),
-                        christmas2012 = moment([2012,11,25]);
+                        christmas2012 = moment.utc([2012,11,25]);
 
                     picker.bind('presetSelected', spy);
 
@@ -642,7 +642,7 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.startCalendar.trigger('onDateSelected', { date: '2012-12-01' });
 
                     expect(highlightRangeSpy.calledOnce).toEqual(true);
-                    expect(highlightRangeSpy.args[0][0].toString()).toEqual(moment([2012,11,1]).toString());
+                    expect(highlightRangeSpy.args[0][0].toString()).toEqual(moment.utc([2012,11,1]).toString());
                     expect(highlightRangeSpy.args[0][1].toString()).toEqual(picker.getEndDate().toString());
                 });
 
@@ -652,8 +652,8 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.endCalendar.trigger('onDateSelected', { date: '2012-12-30' });
 
                     expect(highlightRangeSpy.calledOnce).toEqual(true);
-                    expect(highlightRangeSpy.args[0][0].toString()).toEqual(moment([2012,11,25]).toString());
-                    expect(highlightRangeSpy.args[0][1].toString()).toEqual(moment([2012,11,30]).toString());
+                    expect(highlightRangeSpy.args[0][0].toString()).toEqual(moment.utc([2012,11,25]).toString());
+                    expect(highlightRangeSpy.args[0][1].toString()).toEqual(moment.utc([2012,11,30]).toString());
                 });
 
                 it('triggers a startDateSelected event when the startCalendar date changes', function(){
@@ -664,7 +664,7 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.startCalendar.$el.find('.day[data-date="2012-12-01"]').click();
 
                     expect(spy.calledOnce).toEqual(true);
-                    expect(spy.args[0][0].startDate.toString()).toEqual(moment([2012,11,1]).toString());
+                    expect(spy.args[0][0].startDate.toString()).toEqual(moment.utc([2012,11,1]).toString());
                 });
 
                 it('triggers a endDateSelected event when the endCalendar date changes', function(){
@@ -675,7 +675,7 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.endCalendar.$el.find('.day[data-date="2012-12-30"]').click();
 
                     expect(spy.calledOnce).toEqual(true);
-                    expect(spy.args[0][0].endDate.toString()).toEqual(moment([2012,11,30]).toString());
+                    expect(spy.args[0][0].endDate.toString()).toEqual(moment.utc([2012,11,30]).toString());
                 });
 
                 it('triggers endDateSelected with corrected date when end date before start date', function(){
@@ -686,8 +686,8 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.endCalendar.$el.find('.day[data-date="2012-12-20"]').click();
 
                     expect(spy.calledOnce).toEqual(true);
-                    expect(spy.args[0][0].startDate.toString()).toEqual(moment([2012,11,20]).toString());
-                    expect(spy.args[0][0].endDate.toString()).toEqual(moment([2012,11,20]).toString());
+                    expect(spy.args[0][0].startDate.toString()).toEqual(moment.utc([2012,11,20]).toString());
+                    expect(spy.args[0][0].endDate.toString()).toEqual(moment.utc([2012,11,20]).toString());
                 });
 
                 it('triggers startDateSelected with corrected date when start date after end date', function(){
@@ -700,8 +700,8 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.startCalendar.$el.find('.day[data-date="2012-12-31"]').click();
 
                     expect(spy.calledOnce).toEqual(true);
-                    expect(spy.args[0][0].startDate.toString()).toEqual(moment([2012,11,31]).toString());
-                    expect(spy.args[0][0].endDate.toString()).toEqual(moment([2012,11,31]).toString());
+                    expect(spy.args[0][0].startDate.toString()).toEqual(moment.utc([2012,11,31]).toString());
+                    expect(spy.args[0][0].endDate.toString()).toEqual(moment.utc([2012,11,31]).toString());
                 });
 
                 it('does not trigger onDateSelected on the other calendar when fixing start date', function(){
@@ -751,8 +751,8 @@ define(['lib/daterangepicker/daterangepicker'],
                 });
 
                 it('calls this.startCalendar.highlightCells with the correct dates', function(){
-                    var startDate = moment([2012,11,1]),
-                        endDate = moment([2012,11,31]);
+                    var startDate = moment.utc([2012,11,1]),
+                        endDate = moment.utc([2012,11,31]);
 
                     picker._highlightRange(startDate, endDate);
 
@@ -762,8 +762,8 @@ define(['lib/daterangepicker/daterangepicker'],
                 });
 
                 it('calls this.endCalendar.highlightCells with the correct dates', function(){
-                    var startDate = moment([2012,11,1]),
-                        endDate = moment([2012,11,31]);
+                    var startDate = moment.utc([2012,11,1]),
+                        endDate = moment.utc([2012,11,31]);
 
                     picker._highlightRange(startDate, endDate);
 
@@ -773,8 +773,8 @@ define(['lib/daterangepicker/daterangepicker'],
                 });
 
                 it('does not call either calendar\'s highlight cells method if an invalid date range is used', function(){
-                    var startDate = moment([2012,11,31]),
-                        endDate = moment([2012,11,1]);
+                    var startDate = moment.utc([2012,11,31]),
+                        endDate = moment.utc([2012,11,1]);
 
                     picker._highlightRange(startDate, endDate);
 
@@ -785,8 +785,8 @@ define(['lib/daterangepicker/daterangepicker'],
 
             describe('presets', function(){
                 beforeEach(function(){
-                    var christmas2012Str = moment([2012,11,25]).format('YYYY-MM-DD'),
-                        nye2012Str = moment([2012,11,31]).format('YYYY-MM-DD');
+                    var christmas2012Str = moment.utc([2012,11,25]).format('YYYY-MM-DD'),
+                        nye2012Str = moment.utc([2012,11,31]).format('YYYY-MM-DD');
 
                     picker = daterangepicker.create({
                         presets: {
@@ -817,7 +817,7 @@ define(['lib/daterangepicker/daterangepicker'],
                 });
 
                 it('selects the corresponding date range when a preset is clicked', function(){
-                    var christmas2012 = moment([2012,11,25]);
+                    var christmas2012 = moment.utc([2012,11,25]);
 
                     picker.$el.find('.presets li').eq(0).click();
 
@@ -827,7 +827,7 @@ define(['lib/daterangepicker/daterangepicker'],
 
                 it('triggers a presetSelected event when a preset is chosen', function(){
                     var spy = sinon.spy(),
-                        christmas2012 = moment([2012,11,25]);
+                        christmas2012 = moment.utc([2012,11,25]);
 
                     picker.bind('presetSelected', spy);
 
@@ -842,8 +842,8 @@ define(['lib/daterangepicker/daterangepicker'],
 
         describe('as a jquery plugin', function(){
             var input,
-                christmas2012Str = moment([2012,11,25]).format('YYYY-MM-DD'),
-                nye2012Str = moment([2012,11,31]).format('YYYY-MM-DD');
+                christmas2012Str = moment.utc([2012,11,25]).format('YYYY-MM-DD'),
+                nye2012Str = moment.utc([2012,11,31]).format('YYYY-MM-DD');
 
             beforeEach(function(){
                 input = $('<input id="pickerInput"/>');
@@ -880,8 +880,8 @@ define(['lib/daterangepicker/daterangepicker'],
 
                 var picker = input.data('picker');
 
-                expect(picker.startCalendar.selectedDate.toString()).toEqual(moment([2013,0,1]).toString());
-                expect(picker.endCalendar.selectedDate.toString()).toEqual(moment([2013,1,14]).toString());
+                expect(picker.startCalendar.selectedDate.toString()).toEqual(moment.utc([2013,0,1]).toString());
+                expect(picker.endCalendar.selectedDate.toString()).toEqual(moment.utc([2013,1,14]).toString());
             });
 
             it('shows the picker when the target element is clicked', function(){
