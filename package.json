@@ -1,7 +1,7 @@
 {
   "name": "daterangepicker",
   "description": "Lightweight Date range picker",
-  "version": "0.9.3",
+  "version": "1.0.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/BrandwatchLtd/daterangepicker.git"
