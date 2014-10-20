@@ -139,7 +139,7 @@ define(['lib/daterangepicker/daterangepicker'],
                     expect(picker.$el.find('.close .testClass').length).toEqual(1);
                 });
 
-                it('triggers a "render" event on the daterangepicker', function() {
+                it('triggers an "onRendered" event on the daterangepicker', function() {
                     picker = daterangepicker.create();
 
                     sinon.spy(picker, 'trigger');
@@ -147,7 +147,7 @@ define(['lib/daterangepicker/daterangepicker'],
                     picker.render();
 
                     expect(picker.trigger.calledOnce).toEqual(true);
-                    expect(picker.trigger.calledWith('render')).toEqual(true);
+                    expect(picker.trigger.calledWith('onRendered')).toEqual(true);
                 });
             });
 
