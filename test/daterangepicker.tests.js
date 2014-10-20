@@ -43,7 +43,7 @@ define(['lib/daterangepicker/daterangepicker'],
                 });
 
                 it('stores the selected month', function(){
-                    expect(calendar.monthToDisplay).toEqual(moment.utc([2012,11,1]));
+                    expect(calendar.monthToDisplay.toString()).toEqual(moment.utc([2012,11,1]).toString());
                 });
 
                 it('sets this.$el to be an empty div', function(){
@@ -137,6 +137,17 @@ define(['lib/daterangepicker/daterangepicker'],
                     });
                     picker.render();
                     expect(picker.$el.find('.close .testClass').length).toEqual(1);
+                });
+
+                it('triggers an "onRendered" event on the daterangepicker', function() {
+                    picker = daterangepicker.create();
+
+                    sinon.spy(picker, 'trigger');
+
+                    picker.render();
+
+                    expect(picker.trigger.calledOnce).toEqual(true);
+                    expect(picker.trigger.calledWith('onRendered')).toEqual(true);
                 });
             });
 
@@ -236,7 +247,7 @@ define(['lib/daterangepicker/daterangepicker'],
                 it('updates this.monthToDisplay', function(){
                     calendar.showMonth(2010,0);
 
-                    expect(calendar.monthToDisplay).toEqual(moment.utc([2010,0]));
+                    expect(calendar.monthToDisplay.toString()).toEqual(moment.utc([2010,0]).toString());
                 });
 
                 it('re-renders', function(){
@@ -429,7 +440,8 @@ define(['lib/daterangepicker/daterangepicker'],
                                 startDate: christmas2012Str
                             },
                             'new years eve 2012': {
-                                startDate: nye2012Str
+                                startDate: nye2012Str,
+                                specifyTime: true
                             }
                         },
                         singleDate: true
@@ -470,6 +482,34 @@ define(['lib/daterangepicker/daterangepicker'],
                     expect(spy.calledOnce).toEqual(true);
                     expect(spy.args[0][0].startDate.toString()).toEqual(christmas2012.toString());
                     expect(spy.args[0][0].endDate.toString()).toEqual(christmas2012.toString());
+                });
+
+                it('passes specifyTime as true if set to true on the preset', function() {
+                    var spy = sinon.spy(),
+                        nye2012Str = moment([2012,11,31]);
+
+                    picker.bind('presetSelected', spy);
+
+                    picker.$el.find('.presets li').eq(1).click();
+
+                    expect(spy.calledOnce).toEqual(true);
+                    expect(spy.args[0][0].startDate.toString()).toEqual(nye2012Str.toString());
+                    expect(spy.args[0][0].endDate.toString()).toEqual(nye2012Str.toString());
+                    expect(spy.args[0][0].specifyTime).toEqual(true);
+                });
+
+                it('passes specifyTime as false if set to false on the preset', function() {
+                    var spy = sinon.spy(),
+                        christmas2012 = moment([2012,11,25]);
+
+                    picker.bind('presetSelected', spy);
+
+                    picker.$el.find('.presets li').eq(0).click();
+
+                    expect(spy.calledOnce).toEqual(true);
+                    expect(spy.args[0][0].startDate.toString()).toEqual(christmas2012.toString());
+                    expect(spy.args[0][0].endDate.toString()).toEqual(christmas2012.toString());
+                    expect(spy.args[0][0].specifyTime).toEqual(false);
                 });
             });
         });
@@ -796,7 +836,8 @@ define(['lib/daterangepicker/daterangepicker'],
                             },
                             'new years eve 2012': {
                                 startDate: nye2012Str,
-                                endDate: nye2012Str
+                                endDate: nye2012Str,
+                                specifyTime: true
                             }
                         }
                     });
@@ -810,10 +851,12 @@ define(['lib/daterangepicker/daterangepicker'],
                     expect(picker.$el.find('.presets li').eq(0).text()).toEqual('christmas 2012');
                     expect(picker.$el.find('.presets li').eq(0).data('startdate')).toEqual('2012-12-25');
                     expect(picker.$el.find('.presets li').eq(0).data('enddate')).toEqual('2012-12-25');
+                    expect(picker.$el.find('.presets li').eq(0).data('time')).toEqual(false);
 
                     expect(picker.$el.find('.presets li').eq(1).text()).toEqual('new years eve 2012');
                     expect(picker.$el.find('.presets li').eq(1).data('startdate')).toEqual('2012-12-31');
                     expect(picker.$el.find('.presets li').eq(1).data('enddate')).toEqual('2012-12-31');
+                    expect(picker.$el.find('.presets li').eq(1).data('time')).toEqual(true);
                 });
 
                 it('selects the corresponding date range when a preset is clicked', function(){
@@ -949,7 +992,78 @@ define(['lib/daterangepicker/daterangepicker'],
 
                 expect(input.val()).toEqual('25 Dec 2012 - 25 Dec 2012');
             });
+
+            it('updates the target element when a "refresh" event is triggered', function(){
+                var picker = input.data('picker');
+
+                picker.trigger('refresh', {
+                    startDate: moment([2014, 10, 12]),
+                    endDate: moment([2014, 11, 12])
+                });
+
+                expect(input.val()).toEqual('12 Nov 2014 - 12 Dec 2014');
+            });
         });
 
+        describe('plugin support', function(){
+            it('can be created with plugins', function(){
+                function TestPlugin(options){
+                    this.options = options;
+                }
+                TestPlugin.pluginName = 'testPlugin';
+                TestPlugin.prototype.attach = sinon.spy();
+
+                picker = daterangepicker.create({
+                    plugins: [TestPlugin],
+                    testPlugin: {
+                        property1: true
+                    }
+                });
+
+                expect(picker.testPlugin).toBeDefined();
+                expect(TestPlugin.prototype.attach.calledOnce).toEqual(true);
+                expect(TestPlugin.prototype.attach.args[0][0]).toEqual(picker);
+                expect(picker.testPlugin.options).toEqual({property1: true});
+            });
+
+            it('can add plugins', function(){
+                picker = daterangepicker.create();
+
+                function TestPlugin(options){
+                    this.options = options;
+                }
+                TestPlugin.pluginName = 'testPlugin';
+                TestPlugin.prototype.attach = sinon.spy();
+
+                picker.addPlugin(TestPlugin, {config: 'value'});
+
+                expect(picker.testPlugin).toBeDefined();
+                expect(picker.testPlugin.options).toEqual({config: 'value'});
+                expect(TestPlugin.prototype.attach.calledOnce).toEqual(true);
+                expect(TestPlugin.prototype.attach.args[0][0]).toEqual(picker);
+            });
+
+            it('properly disposes of plugins on destroy', function(){
+                var attachSpy = sinon.spy(),
+                    detachSpy = sinon.spy();
+
+                picker = daterangepicker.create({
+                    plugins: [
+                        _.extend(function TestPlugin(){
+                            return {attach: attachSpy, detach: detachSpy};
+                        }, {pluginName: 'test'})
+                    ]
+                });
+
+                expect(picker._plugins).toEqual(['test']);
+                expect(picker.test).toEqual({attach: attachSpy, detach: detachSpy});
+
+                picker.destroy();
+
+                expect(attachSpy.calledOnce).toEqual(true);
+                expect(detachSpy.calledOnce).toEqual(true);
+                expect(picker._plugins.length).toEqual(0);
+            });
+        });
     });
 });

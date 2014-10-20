@@ -2,19 +2,32 @@
 <html>
     <head>
         <title>DateRangePicker demos</title>
-        <link href="css/bootstrap.css" type="text/css" rel="stylesheet" />
+        <link href="/vendor/bootstrap/docs/assets/css/bootstrap.css" type="text/css" rel="stylesheet" />
         <link href="css/picker.css" type="text/css" rel="stylesheet" />
+        <link href="css/time-support.css" type="text/css" rel="stylesheet" />
+        <link href="/vendor/timepicker/demo/css/timepicker.css" type="text/css" rel="stylesheet" />
 
-        <script src="lib/jquery-1.7.1.js"></script>
-        <script src="lib/underscore.js"></script>
-        <script src="lib/moment.js"></script>
+        <script src="/vendor/jquery/dist/jquery.js"></script>
+        <script src="/vendor/underscore/underscore.js"></script>
+        <script src="/vendor/moment/moment.js"></script>
+        <script src="/vendor/timepicker/lib/timepicker/timepicker.js"></script>
         <script src="/lib/daterangepicker/daterangepicker.js"></script>
+        <script src="/lib/daterangepicker/daterangepicker.timesupport.js"></script>
 
         <style>
             .demo {
                 margin:40px 0;
             }
         </style>
+
+        <script>
+            var today = moment().utc(),
+                todayStr = today.format('YYYY-MM-DD'),
+                yesterday = today.clone().subtract('days', 1),
+                yesterdayStr = yesterday.format('YYYY-MM-DD'),
+                sevenDaysAgoStr = today.clone().subtract('days', 6).format('YYYY-MM-DD');
+
+        </script>
     </head>
     <body>
         <div class="container">
@@ -30,6 +43,59 @@
                     $('#date1').daterangepicker();
                 </script>
             </div>
+
+            <div id="timeSupport" class="demo">
+                <h2>Time Support</h2>
+                <p>A datepicker instantiated with the time support plugin which allows you to specify time</p>
+                <input id="date4"></input>
+                <div id="picker4"/>
+
+                <script>
+                    $('#date4').daterangepicker({
+                        startDate: moment().subtract({'h': 1}),
+                        endDate: moment(),
+                        plugins: [daterangepicker.timeSupport],
+                        presets: {
+                            '1hr': {
+                                startDate: today.clone().subtract('hours', 1).format('YYYY-MM-DDTHH:mm'),
+                                endDate: today.format('YYYY-MM-DDTHH:mm'),
+                                specifyTime: true
+                            },
+                            '6hr': {
+                                startDate: today.clone().subtract('hours', 6).format('YYYY-MM-DDTHH:mm'),
+                                endDate: today.format('YYYY-MM-DDTHH:mm'),
+                                specifyTime: true
+                            },
+                            today: {
+                                startDate: todayStr,
+                                endDate: todayStr
+                            },
+                            yesterday: {
+                                startDate: yesterdayStr,
+                                endDate: yesterdayStr
+                            },
+                            'last seven days': {
+                                startDate: sevenDaysAgoStr,
+                                endDate: todayStr
+                            }
+                        },
+                        timeSupport: {
+                            specifyTimeChecked: true
+                        },
+                        dateFormatter: function (startDate, endDate) {
+                            var picker = $('#date4').data('picker'),
+                                specifyTime = picker.$el.find('[name=specifyTime]').prop('checked');
+
+                            if (specifyTime) {
+                                return startDate.format('DD MMM YYYY, HH:mm') + ' - ' + endDate.format('DD MMM YYYY, HH:mm');
+                            } else {
+                                return startDate.format('DD MMM YYYY') + ' - ' + endDate.format('DD MMM YYYY');
+                            }
+                        }
+                    });
+                </script>
+            </div>
+
 
             <div id="presetRange" class="demo">
                 <h2>Preset Date Range</h2>
@@ -52,11 +118,6 @@
                 <div id="picker3"/>
 
                 <script>
-                    var today = moment(),
-                        todayStr = today.format('YYYY-MM-DD'),
-                        yesterday = today.clone().subtract('days', 1),
-                        yesterdayStr = yesterday.format('YYYY-MM-DD'),
-                        sevenDaysAgoStr = today.clone().subtract('days', 6).format('YYYY-MM-DD');
 
                     $('#date3').daterangepicker({
                         presets: {
@@ -76,6 +137,7 @@
                     });
                 </script>
             </div>
+
         </div>
     </body>
 </html>
