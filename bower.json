@@ -8,7 +8,7 @@
     "components"
   ],
   "dependencies": {
-    "timepicker": "git@github.com:BrandwatchLtd/timepicker.git#0.1.0",
+    "timepicker": "https://github.com/BrandwatchLtd/timepicker.git#0.1.0",
     "jquery": "^1.7.2",
     "underscore": "^1.6.0",
     "moment": ">=2.5.0"
