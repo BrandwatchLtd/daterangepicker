@@ -10,3 +10,7 @@ before_script:
 
 script:
   - $(npm bin)/testem ci -l Firefox,PhantomJS
+
+branches:
+  only:
+    - master
