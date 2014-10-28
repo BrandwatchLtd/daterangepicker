@@ -10,7 +10,7 @@ Running the demos
 
 Pull down the repo then execute:
 
-    ./serve.sh
+    npm start
 
 and open `http://localhost:8080/demo`
 
@@ -19,11 +19,16 @@ Running the tests
 =================
 
 Run
+
     npm install testem -g
     testem
 
-Or pull down the repo then execute:
+To run the tests in CI mode:
 
-    ./serve.sh
+    npm test
+
+To run tests in the browser:
+
+    npm start
 
 and open `http://localhost:8080/test`
