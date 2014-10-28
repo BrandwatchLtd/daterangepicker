@@ -1,7 +1,8 @@
 define([
+    'sinon',
     'lib/daterangepicker/daterangepicker',
     'lib/daterangepicker/daterangepicker.timesupport'
-], function(daterangepicker, timesupport) {
+], function(sinon, daterangepicker, timesupport) {
     'use strict';
 
     var DateRangePicker = daterangepicker.DateRangePicker;
