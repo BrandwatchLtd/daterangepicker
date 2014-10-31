@@ -920,6 +920,12 @@ define([
                 expect(input.data('picker')).toBeDefined();
             });
 
+            it('attaches a reference to the target element on the picker', function(){
+                var picker = input.data('picker');
+
+                expect(picker.$input.data('picker')).toEqual(input.data('picker'));
+            });
+
             it('passes supplied options through to the picker', function(){
                 input.click();
 
