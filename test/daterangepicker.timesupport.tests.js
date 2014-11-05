@@ -254,6 +254,53 @@ define([
             });
         });
 
+        describe('get time picker methods', function () {
+            describe('for date range pickers', function () {
+                beforeEach(function() {
+                    picker = daterangepicker.create({
+                        plugins: [timesupport]
+                    });
+
+                    picker.render();
+                });
+
+                describe('getStartTimePicker', function () {
+                    it('returns the time picker for the start panel', function () {
+                        expect(picker.timeSupport.getStartTimePicker()).toEqual(picker.timeSupport.startPanel.$input.data('timepicker'));
+                    });
+                });
+
+                describe('getEndTimePicker', function () {
+                    it('returns the time picker for the end panel', function () {
+                        expect(picker.timeSupport.getEndTimePicker()).toEqual(picker.timeSupport.endPanel.$input.data('timepicker'));
+                    });
+                });
+            });
+
+            describe('for single date pickers', function () {
+                beforeEach(function() {
+                    picker = daterangepicker.create({
+                        plugins: [timesupport],
+                        singleDate: true
+                    });
+
+                    picker.render();
+                });
+
+                describe('getStartTimePicker', function () {
+                    it('returns the time picker for the start panel', function () {
+                        expect(picker.timeSupport.getStartTimePicker()).toEqual(picker.timeSupport.startPanel.$input.data('timepicker'));
+                    });
+                });
+
+                describe('getEndTimePicker', function () {
+                    it('returns undefined', function () {
+                        expect(picker.timeSupport.getEndTimePicker()).not.toBeDefined();
+                    });
+                });
+            });
+        });
+
         describe('daterangepicker events', function() {
             var $startTime,
                 $endTime;
