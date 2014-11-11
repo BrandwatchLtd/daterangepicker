@@ -254,6 +254,53 @@ define([
             });
         });
 
+        describe('get time picker methods', function () {
+            describe('for date range pickers', function () {
+                beforeEach(function() {
+                    picker = daterangepicker.create({
+                        plugins: [timesupport]
+                    });
+
+                    picker.render();
+                });
+
+                describe('getStartTimePicker', function () {
+                    it('returns the time picker for the start panel', function () {
+                        expect(picker.timeSupport.getStartTimePicker()).toEqual(picker.timeSupport.startPanel.$input.data('timepicker'));
+                    });
+                });
+
+                describe('getEndTimePicker', function () {
+                    it('returns the time picker for the end panel', function () {
+                        expect(picker.timeSupport.getEndTimePicker()).toEqual(picker.timeSupport.endPanel.$input.data('timepicker'));
+                    });
+                });
+            });
+
+            describe('for single date pickers', function () {
+                beforeEach(function() {
+                    picker = daterangepicker.create({
+                        plugins: [timesupport],
+                        singleDate: true
+                    });
+
+                    picker.render();
+                });
+
+                describe('getStartTimePicker', function () {
+                    it('returns the time picker for the start panel', function () {
+                        expect(picker.timeSupport.getStartTimePicker()).toEqual(picker.timeSupport.startPanel.$input.data('timepicker'));
+                    });
+                });
+
+                describe('getEndTimePicker', function () {
+                    it('returns undefined', function () {
+                        expect(picker.timeSupport.getEndTimePicker()).not.toBeDefined();
+                    });
+                });
+            });
+        });
+
         describe('daterangepicker events', function() {
             var $startTime,
                 $endTime;
@@ -391,6 +438,105 @@ define([
                 expect(picker.startCalendar.updateSelectedDate.args[0][0]._isUTC).toEqual(true);
             });
         });
+
+        describe('refreshCalendars', function () {
+            var refreshSpy;
+
+            describe('with a start and end calendar', function () {
+                beforeEach(function () {
+                    picker = daterangepicker.create({
+                        plugins: [timesupport]
+                    });
+
+                    picker.render();
+
+                    refreshSpy = sandbox.spy();
+
+                    picker.bind('refresh', refreshSpy);
+
+                    picker.timeSupport.resetCalendars();
+                });
+
+                it('triggers a "refresh" event', function () {
+                    expect(refreshSpy.calledOnce).toEqual(true);
+                });
+
+                it('provides startDate and endDate as event data', function () {
+                    expect(Object.keys(refreshSpy.args[0][0])).toEqual(['startDate', 'endDate']);
+                });
+            });
+
+            describe('in singleDate mode', function () {
+                beforeEach(function () {
+                    picker = daterangepicker.create({
+                        plugins: [timesupport],
+                        singleDate: true
+                    });
+
+                    picker.render();
+
+                    refreshSpy = sandbox.spy();
+
+                    picker.bind('refresh', refreshSpy);
+
+                    picker.timeSupport.resetCalendars();
+                });
+
+                it('only provides startDate event data', function () {
+                    expect(Object.keys(refreshSpy.args[0][0])).toEqual(['startDate']);
+                });
+            });
+        });
+
+        describe('closePanel', function () {
+            describe('with a start and end calendar', function () {
+                beforeEach(function () {
+                    picker = daterangepicker.create({
+                        plugins: [timesupport]
+                    });
+
+                    picker.render();
+
+                    sandbox.spy(picker.timeSupport, 'updateStartTime');
+                    sandbox.spy(picker.timeSupport, 'updateEndTime');
+
+                    picker.timeSupport.closePanel();
+                });
+
+                it('removes the "isOpen" class from the panel', function () {
+                    expect(picker.timeSupport.$panelWrapper.hasClass('isOpen')).toEqual(false);
+                });
+
+                it('calls updateStartTime', function () {
+                    expect(picker.timeSupport.updateStartTime.calledOnce).toEqual(true);
+                });
+
+                it('calls updateEndTime', function () {
+                    expect(picker.timeSupport.updateEndTime.calledOnce).toEqual(true);
+                });
+            });
+
+            describe('in singleDate mode', function () {
+                beforeEach(function () {
+                    picker = daterangepicker.create({
+                        plugins: [timesupport],
+                        singleDate: true
+                    });
+
+                    picker.render();
+
+                    sandbox.spy(picker.timeSupport, 'updateStartTime');
+                    sandbox.spy(picker.timeSupport, 'updateEndTime');
+
+                    picker.timeSupport.closePanel();
+                });
+
+                it('does not call updateEndTime', function () {
+                    expect(picker.timeSupport.updateEndTime.called).toEqual(false);
+                });
+            });
+        });
+
 
         describe('as a jquery plugin', function() {
             var input,
