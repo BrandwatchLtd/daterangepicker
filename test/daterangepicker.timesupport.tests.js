@@ -1,14 +1,19 @@
 define([
     'sinon',
+    'moment',
     'lib/daterangepicker/daterangepicker',
     'lib/daterangepicker/daterangepicker.timesupport'
-], function(sinon, daterangepicker, timesupport) {
+], function(
+    sinon,
+    moment,
+    daterangepicker,
+    timesupport
+) {
     'use strict';
-
-    var DateRangePicker = daterangepicker.DateRangePicker;
 
     describe('time support plugin', function() {
         var picker,
+            timezone = moment().format('UTCZ'),
             sandbox;
 
         beforeEach(function() {
@@ -27,6 +32,7 @@ define([
         describe('when attached', function() {
             beforeEach(function() {
                 picker = daterangepicker.create({
+                    timezone: timezone,
                     plugins: [timesupport]
                 });
 
@@ -41,6 +47,11 @@ define([
                 expect(picker.$el.find('[name="specifyTime"]').length).toEqual(1);
             });
 
+            it('renders the relevant timezone inside a span', function() {
+                expect(picker.$el.find('.time-support__zone').length).toEqual(1);
+                expect(picker.$el.find('.time-support__zone').text()).toEqual('(' + timezone + ')');
+            });
+
             it('renders two panels inside the wrapper', function() {
                 expect(picker.$el.find('.time-support__panel-wrapper .time-support__panel').length).toEqual(2);
             });
@@ -49,11 +60,11 @@ define([
         describe('plugin options', function() {
             describe('when specifyTimeChecked is true', function() {
                 beforeEach(function() {
-                    sandbox.useFakeTimers(new Date(Date.UTC(2013, 7, 1, 11, 0)).getTime());
+                    sandbox.useFakeTimers(Date.UTC(2013, 7, 1, 11, 0));
 
                     picker = daterangepicker.create({
-                        startDate: moment().zone(120).toISOString(),
-                        endDate: moment().zone(120).add({'h': 2}).toISOString(),
+                        startDate: moment().utcOffset(120).toISOString(),
+                        endDate: moment().utcOffset(120).add({'h': 2}).toISOString(),
                         plugins: [timesupport],
                         timeSupport: {
                             specifyTimeChecked: true
@@ -118,8 +129,28 @@ define([
 
         describe('isValidTime', function() {
             var i,
-                validTimes = ['00:00', '10:20', '02:30'],
-                invalidTimes = ['0000', '   10:20', '12:  23', '2:30', '23 : 45', '10:20   ', '24:00', '23:59:59', '', '  ', '23:1d', '23::00', '2pm', '12am', '0'];
+                validTimes = [
+                    '00:00',
+                    '10:20',
+                    '02:30'
+                ],
+                invalidTimes = [
+                    '0000',
+                    '   10:20',
+                    '12:  23',
+                    '2:30',
+                    '23 : 45',
+                    '10:20   ',
+                    '24:00',
+                    '23:59:59',
+                    '',
+                    '  ',
+                    '23:1d',
+                    '23::00',
+                    '2pm',
+                    '12am',
+                    '0'
+                ];
 
             beforeEach(function() {
                 picker = daterangepicker.create({
