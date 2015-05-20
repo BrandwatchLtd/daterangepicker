@@ -17,7 +17,6 @@
     "expectations": "~0.2.6",
     "requirejs": ">=2",
     "mocha": ">=1.20.1",
-    "bootstrap": "2.1.1",
-    "sinon": ">=1.7.3"
+    "bootstrap": "2.1.1"
   }
 }

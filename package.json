@@ -19,6 +19,7 @@
   ],
   "dependencies": {},
   "devDependencies": {
+    "sinon": ">=1.7.3",
     "mocha": "~1.7.4",
     "phantomjs": "^1.9.10",
     "serve": "*",
