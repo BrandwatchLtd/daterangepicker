@@ -1,10 +1,13 @@
 define([
     'sinon',
+    'moment',
     'lib/daterangepicker/daterangepicker'
-], function(sinon, daterangepicker){
+], function(
+    sinon,
+    moment,
+    daterangepicker
+){
     'use strict';
-
-    var DateRangePicker = daterangepicker.DateRangePicker;
 
     describe('daterangepicker', function(){
         var picker,
@@ -488,7 +491,7 @@ define([
 
                 it('passes specifyTime as true if set to true on the preset', function() {
                     var spy = sinon.spy(),
-                        nye2012Str = moment([2012,11,31]);
+                        nye2012Str = moment.utc([2012,11,31]);
 
                     picker.bind('presetSelected', spy);
 
@@ -502,7 +505,7 @@ define([
 
                 it('passes specifyTime as false if set to false on the preset', function() {
                     var spy = sinon.spy(),
-                        christmas2012 = moment([2012,11,25]);
+                        christmas2012 = moment.utc([2012,11,25]);
 
                     picker.bind('presetSelected', spy);
 
