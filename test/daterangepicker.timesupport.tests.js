@@ -13,6 +13,7 @@ define([
 
     describe('time support plugin', function() {
         var picker,
+            timezone = '+02:00',
             sandbox;
 
         beforeEach(function() {
@@ -31,6 +32,7 @@ define([
         describe('when attached', function() {
             beforeEach(function() {
                 picker = daterangepicker.create({
+                    timezone: timezone,
                     plugins: [timesupport]
                 });
 
@@ -43,6 +45,11 @@ define([
 
             it('renders a checkbox to allow the use to specify a time', function() {
                 expect(picker.$el.find('[name="specifyTime"]').length).toEqual(1);
+            });
+
+            it('renders the relevant timezone inside a span', function() {
+                expect(picker.$el.find('.time-support__zone').length).toEqual(1);
+                expect(picker.$el.find('.time-support__zone').text()).toEqual('(UTC' + timezone + ')');
             });
 
             it('renders two panels inside the wrapper', function() {
