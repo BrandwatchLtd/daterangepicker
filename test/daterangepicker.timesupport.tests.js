@@ -45,8 +45,31 @@ define([
                 expect(picker.$el.find('[name="specifyTime"]').length).toEqual(1);
             });
 
+            it('renders the default timezone (UTC) inside a span', function() {
+                expect(picker.$el.find('.time-support__zone').length).toEqual(1);
+                expect(picker.$el.find('.time-support__zone').text()).toEqual('(UTC)');
+            });
+
             it('renders two panels inside the wrapper', function() {
                 expect(picker.$el.find('.time-support__panel-wrapper .time-support__panel').length).toEqual(2);
+            });
+
+            describe('when a timezone is provided', function(){
+                var timezone = moment().format('UTCZ');
+
+                beforeEach(function() {
+                    picker = daterangepicker.create({
+                        timezone: timezone,
+                        plugins: [timesupport]
+                    });
+
+                    picker.render();
+                });
+
+                it('renders it inside a span', function() {
+                    expect(picker.$el.find('.time-support__zone').length).toEqual(1);
+                    expect(picker.$el.find('.time-support__zone').text()).toEqual('(' + timezone + ')');
+                });
             });
         });
 
