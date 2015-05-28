@@ -26,7 +26,6 @@
                 yesterday = today.clone().subtract('days', 1),
                 yesterdayStr = yesterday.format('YYYY-MM-DD'),
                 sevenDaysAgoStr = today.clone().subtract('days', 6).format('YYYY-MM-DD');
-
         </script>
     </head>
     <body>
@@ -36,8 +35,8 @@
             <div id="simple" class="demo">
                 <h2>Simple</h2>
                 <p>A datepicker instantiated with no options</p>
-                <input id="date1"></input>
-                <div id="picker1"/>
+                <input id="date1">
+                <div id="picker1"></div>
 
                 <script>
                     $('#date1').daterangepicker();
@@ -47,8 +46,8 @@
             <div id="timeSupport" class="demo">
                 <h2>Time Support</h2>
                 <p>A datepicker instantiated with the time support plugin which allows you to specify time</p>
-                <input id="date4"></input>
-                <div id="picker4"/>
+                <input id="date4">
+                <div id="picker4"></div>
 
                 <script>
                     $('#date4').daterangepicker({
@@ -97,12 +96,11 @@
                 </script>
             </div>
 
-
             <div id="presetRange" class="demo">
                 <h2>Preset Date Range</h2>
                 <p>A datepicker instantiated with a start and end date</p>
-                <input id="date2"></input>
-                <div id="picker2"/>
+                <input id="date2">
+                <div id="picker2"></div>
 
                 <script>
                     $('#date2').daterangepicker({
@@ -115,8 +113,8 @@
             <div id="datePresets" class="demo">
                 <h2>Preset Dates</h2>
                 <p>A datepicker instantiated with a list of preset date ranges</p>
-                <input id="date3"></input>
-                <div id="picker3"/>
+                <input id="date3">
+                <div id="picker3"></div>
 
                 <script>
 
