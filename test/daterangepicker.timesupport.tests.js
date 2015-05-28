@@ -312,31 +312,36 @@ define([
             });
         });
 
-        describe('getStartTimePicker', function () {
+        describe('TimeSupport prototype methods', function() {
+            var timeSupport;
+
             beforeEach(function() {
                 picker = daterangepicker.create({
                     plugins: [timesupport]
                 });
 
+                timeSupport = picker.timeSupport;
                 picker.render();
             });
 
-            it('returns the time picker for the start panel', function () {
-                expect(picker.timeSupport.getStartTimePicker()).toEqual(picker.timeSupport.startPanel.$input.data('timepicker'));
-            });
-        });
-
-        describe('getEndTimePicker', function () {
-            beforeEach(function() {
-                picker = daterangepicker.create({
-                    plugins: [timesupport]
+            describe('getStartTimePicker', function () {
+                it('returns the time picker for the start panel', function () {
+                    expect(picker.timeSupport.getStartTimePicker()).toEqual(picker.timeSupport.startPanel.$input.data('timepicker'));
                 });
-
-                picker.render();
             });
 
-            it('returns the time picker for the end panel', function () {
-                expect(picker.timeSupport.getEndTimePicker()).toEqual(picker.timeSupport.endPanel.$input.data('timepicker'));
+            describe('getEndTimePicker', function () {
+                it('returns the time picker for the end panel', function () {
+                    expect(picker.timeSupport.getEndTimePicker()).toEqual(picker.timeSupport.endPanel.$input.data('timepicker'));
+                });
+            });
+
+            describe('setTimezone', function () {
+                it('changes the timezone displayed in the timepicker', function () {
+                    expect(timeSupport.$timezoneSpan.text()).toEqual('(UTC)');
+                    timeSupport.setTimezone('Europe/Helsinki');
+                    expect(timeSupport.$timezoneSpan.text()).toEqual('(Europe/Helsinki)');
+                });
             });
         });
 

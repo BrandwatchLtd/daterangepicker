@@ -10,6 +10,7 @@
         <script src="/vendor/jquery/dist/jquery.js"></script>
         <script src="/vendor/underscore/underscore.js"></script>
         <script src="/vendor/moment/moment.js"></script>
+        <script src="/vendor/moment-timezone/builds/moment-timezone-with-data.js"></script>
         <script src="/vendor/timepicker/lib/timepicker/timepicker.js"></script>
         <script src="/lib/daterangepicker/daterangepicker.js"></script>
         <script src="/lib/daterangepicker/daterangepicker.timesupport.js"></script>
@@ -17,6 +18,10 @@
         <style>
             .demo {
                 margin:40px 0;
+            }
+
+            select {
+                margin-bottom: 0px;
             }
         </style>
 
@@ -60,13 +65,19 @@
                 <h2>Time Support</h2>
                 <p>A datepicker instantiated with the time support plugin which allows you to specify time</p>
                 <input id="date4">
+                <select id="picker4_timezone" title="Select a value to to change the displayed timezone via setTimezone()"></select>
                 <div id="picker4"></div>
 
                 <script>
-                    $('#date4').daterangepicker({
+                    var $input = $('#date4'),
+                        $timezonePicker,
+                        $daterangepicker,
+                        initialTimezone = moment.tz.names()[0];
+
+                    $input.daterangepicker({
                         startDate: moment().subtract({'h': 1}),
                         endDate: moment(),
-                        timezone: moment().format('UTCZ'),
+                        timezone: initialTimezone,
                         plugins: [daterangepicker.timeSupport],
                         presets: {
                             '1hr': {
@@ -105,6 +116,18 @@
                                 return startDate.format('DD MMM YYYY') + ' - ' + endDate.format('DD MMM YYYY');
                             }
                         }
+                    });
+
+                    $timezoneSelect = $('#picker4_timezone');
+                    $daterangepicker = $input.data('picker');
+
+                    moment.tz.names().forEach(function(name){
+                        $('<option/>').text(name).val(name).appendTo($timezoneSelect);
+                    });
+
+                    $timezoneSelect.val(initialTimezone);
+                    $timezoneSelect.change(function() {
+                        $daterangepicker.timeSupport.setTimezone(this.value);
                     });
                 </script>
             </div>
