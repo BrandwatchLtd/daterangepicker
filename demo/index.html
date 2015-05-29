@@ -10,6 +10,7 @@
         <script src="/vendor/jquery/dist/jquery.js"></script>
         <script src="/vendor/underscore/underscore.js"></script>
         <script src="/vendor/moment/moment.js"></script>
+        <script src="/vendor/moment-timezone/builds/moment-timezone-with-data.js"></script>
         <script src="/vendor/timepicker/lib/timepicker/timepicker.js"></script>
         <script src="/lib/daterangepicker/daterangepicker.js"></script>
         <script src="/lib/daterangepicker/daterangepicker.timesupport.js"></script>
@@ -17,6 +18,10 @@
         <style>
             .demo {
                 margin:40px 0;
+            }
+
+            select {
+                margin-bottom: 0px;
             }
         </style>
 
@@ -26,7 +31,6 @@
                 yesterday = today.clone().subtract('days', 1),
                 yesterdayStr = yesterday.format('YYYY-MM-DD'),
                 sevenDaysAgoStr = today.clone().subtract('days', 6).format('YYYY-MM-DD');
-
         </script>
     </head>
     <body>
@@ -36,25 +40,44 @@
             <div id="simple" class="demo">
                 <h2>Simple</h2>
                 <p>A datepicker instantiated with no options</p>
-                <input id="date1"></input>
-                <div id="picker1"/>
+                <input id="date1">
+                <div id="picker1"></div>
 
                 <script>
                     $('#date1').daterangepicker();
                 </script>
             </div>
 
+            <div id="singleDate" class="demo">
+                <h2>Single date</h2>
+                <p>A datepicker instantiated with just one date</p>
+                <input id="date5">
+                <div id="picker5"></div>
+
+                <script>
+                    $('#date5').daterangepicker({
+                        singleDate: true
+                    });
+                </script>
+            </div>
+
             <div id="timeSupport" class="demo">
                 <h2>Time Support</h2>
                 <p>A datepicker instantiated with the time support plugin which allows you to specify time</p>
-                <input id="date4"></input>
-                <div id="picker4"/>
+                <input id="date4">
+                <select id="picker4_timezone" title="Select a value to to change the displayed timezone via setTimezone()"></select>
+                <div id="picker4"></div>
 
                 <script>
-                    $('#date4').daterangepicker({
+                    var $input = $('#date4'),
+                        $timezonePicker,
+                        $daterangepicker,
+                        initialTimezone = moment.tz.names()[0];
+
+                    $input.daterangepicker({
                         startDate: moment().subtract({'h': 1}),
                         endDate: moment(),
-                        timezone: moment().format('UTCZ'),
+                        timezone: initialTimezone,
                         plugins: [daterangepicker.timeSupport],
                         presets: {
                             '1hr': {
@@ -94,15 +117,26 @@
                             }
                         }
                     });
+
+                    $timezoneSelect = $('#picker4_timezone');
+                    $daterangepicker = $input.data('picker');
+
+                    moment.tz.names().forEach(function(name){
+                        $('<option/>').text(name).val(name).appendTo($timezoneSelect);
+                    });
+
+                    $timezoneSelect.val(initialTimezone);
+                    $timezoneSelect.change(function() {
+                        $daterangepicker.timeSupport.setTimezone(this.value);
+                    });
                 </script>
             </div>
-
 
             <div id="presetRange" class="demo">
                 <h2>Preset Date Range</h2>
                 <p>A datepicker instantiated with a start and end date</p>
-                <input id="date2"></input>
-                <div id="picker2"/>
+                <input id="date2">
+                <div id="picker2"></div>
 
                 <script>
                     $('#date2').daterangepicker({
@@ -115,8 +149,8 @@
             <div id="datePresets" class="demo">
                 <h2>Preset Dates</h2>
                 <p>A datepicker instantiated with a list of preset date ranges</p>
-                <input id="date3"></input>
-                <div id="picker3"/>
+                <input id="date3">
+                <div id="picker3"></div>
 
                 <script>
 
