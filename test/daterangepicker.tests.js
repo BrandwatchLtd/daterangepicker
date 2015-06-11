@@ -11,8 +11,9 @@ define([
 
     describe('daterangepicker', function(){
         var picker;
-        var christmas2012Str = moment.utc([2012,11,25]).format('YYYY-MM-DD');
-        var nye2012Str = moment.utc([2012,11,31]).format('YYYY-MM-DD');
+        var timezone = 'Australia/Canberra';
+        var christmas2012Str = moment.tz([2012,11,25], timezone).format('YYYY-MM-DD');
+        var nye2012Str = moment.tz([2012,11,31], timezone).format('YYYY-MM-DD');
         var $testInput = $('<input type="text">');
 
         afterEach(function(){
@@ -31,7 +32,8 @@ define([
                 });
                 calendar = picker._createCalendar({
                     selectedDate: '2012-12-25',
-                    className: 'myCalendar'
+                    className: 'myCalendar',
+                    timezone: timezone
                 });
             });
 
@@ -46,11 +48,11 @@ define([
 
             describe('initialization', function(){
                 it('stores the selected date', function(){
-                    expect(calendar.selectedDate.toString()).toEqual(moment.utc([2012,11,25]).toString());
+                    expect(calendar.selectedDate.toString()).toEqual(moment.tz([2012,11,25], timezone).toString());
                 });
 
                 it('stores the selected month', function(){
-                    expect(calendar.monthToDisplay.toString()).toEqual(moment.utc([2012,11,1]).toString());
+                    expect(calendar.monthToDisplay.toString()).toEqual(moment.tz([2012,11,1], timezone).toString());
                 });
 
                 it('sets this.$el to be an empty div', function(){
@@ -259,7 +261,7 @@ define([
                 it('updates this.monthToDisplay', function(){
                     calendar.showMonth(2010,0);
 
-                    expect(calendar.monthToDisplay.toString()).toEqual(moment.utc([2010,0]).toString());
+                    expect(calendar.monthToDisplay.toString()).toEqual(moment.tz([2010,0], timezone).toString());
                 });
 
                 it('re-renders', function(){
@@ -277,8 +279,8 @@ define([
                 });
 
                 it('highlights from the start to the end of the month if the end date is next month', function(){
-                    var startDate = moment.utc([2012,11,30]),
-                        endDate = moment.utc([2013,0,2]);
+                    var startDate = moment.tz([2012,11,30], timezone);
+                    var endDate = moment.tz([2013,0,2], timezone);
 
                     calendar.highlightCells(startDate, endDate);
 
@@ -287,8 +289,8 @@ define([
                 });
 
                 it('highlights from the end date to the start of the month if the start date is previous month', function(){
-                    var startDate = moment.utc([2012,10,30]),
-                        endDate = moment.utc([2012,11,2]);
+                    var startDate = moment.tz([2012,10,30], timezone);
+                    var endDate = moment.tz([2012,11,2], timezone);
 
                     calendar.highlightCells(startDate, endDate);
 
@@ -297,8 +299,8 @@ define([
                 });
 
                 it('highlights the range if both start and end are in the displayed month', function(){
-                    var startDate = moment.utc([2012,11,24]),
-                        endDate = moment.utc([2012,11,30]);
+                    var startDate = moment.tz([2012,11,24], timezone);
+                    var endDate = moment.tz([2012,11,30], timezone);
 
                     calendar.highlightCells(startDate, endDate);
 
@@ -422,7 +424,8 @@ define([
                     picker = daterangepicker.create({
                         $input: $testInput,
                         startDate: '2012-12-25',
-                        singleDate: true
+                        singleDate: true,
+                        timezone: timezone
                     });
                     picker.render();
                 });
@@ -433,7 +436,7 @@ define([
                     picker.startCalendar.trigger('onDateSelected', { date: '2012-12-01' });
 
                     expect(highlightRangeSpy.calledOnce).toEqual(true);
-                    expect(highlightRangeSpy.args[0][0].toString()).toEqual(moment.utc([2012,11,1]).toString());
+                    expect(highlightRangeSpy.args[0][0].toString()).toEqual(moment.tz([2012,11,1], timezone).toString());
                     expect(highlightRangeSpy.args[0][1].toString()).toEqual(picker.getEndDate().toString());
                 });
 
@@ -445,7 +448,7 @@ define([
                     picker.startCalendar.$el.find('.day[data-date="2012-12-01"]').click();
 
                     expect(spy.calledOnce).toEqual(true);
-                    expect(spy.args[0][0].startDate.toString()).toEqual(moment.utc([2012,11,1]).toString());
+                    expect(spy.args[0][0].startDate.toString()).toEqual(moment.tz([2012,11,1], timezone).toString());
                 });
             });
 
@@ -462,7 +465,8 @@ define([
                                 specifyTime: true
                             }
                         },
-                        singleDate: true
+                        singleDate: true,
+                        timezone: timezone
                     });
 
                     picker.render();
@@ -481,7 +485,7 @@ define([
                 });
 
                 it('selects the corresponding date when a preset is clicked', function(){
-                    var christmas2012 = moment.utc([2012,11,25]);
+                    var christmas2012 = moment.tz([2012,11,25], timezone);
 
                     picker.$el.find('.presets li').eq(0).click();
 
@@ -491,7 +495,7 @@ define([
 
                 it('triggers a presetSelected event when a preset is chosen', function(){
                     var spy = sinon.spy(),
-                        christmas2012 = moment.utc([2012,11,25]);
+                        christmas2012 = moment.tz([2012,11,25], timezone);
 
                     picker.bind('presetSelected', spy);
 
@@ -504,7 +508,7 @@ define([
 
                 it('passes specifyTime as true if set to true on the preset', function() {
                     var spy = sinon.spy(),
-                        nye2012Str = moment.utc([2012,11,31]);
+                        nye2012Str = moment.tz([2012,11,31], timezone);
 
                     picker.bind('presetSelected', spy);
 
@@ -518,7 +522,7 @@ define([
 
                 it('passes specifyTime as false if set to false on the preset', function() {
                     var spy = sinon.spy(),
-                        christmas2012 = moment.utc([2012,11,25]);
+                        christmas2012 = moment.tz([2012,11,25], timezone);
 
                     picker.bind('presetSelected', spy);
 
@@ -683,7 +687,8 @@ define([
                     picker = daterangepicker.create({
                         $input: $testInput,
                         startDate: '2012-12-25',
-                        endDate: '2012-12-31'
+                        endDate: '2012-12-31',
+                        timezone: timezone
                     });
                     picker.render();
                 });
@@ -706,7 +711,7 @@ define([
                     picker.startCalendar.trigger('onDateSelected', { date: '2012-12-01' });
 
                     expect(highlightRangeSpy.calledOnce).toEqual(true);
-                    expect(highlightRangeSpy.args[0][0].toString()).toEqual(moment.utc([2012,11,1]).toString());
+                    expect(highlightRangeSpy.args[0][0].toString()).toEqual(moment.tz([2012,11,1], timezone).toString());
                     expect(highlightRangeSpy.args[0][1].toString()).toEqual(picker.getEndDate().toString());
                 });
 
@@ -716,8 +721,8 @@ define([
                     picker.endCalendar.trigger('onDateSelected', { date: '2012-12-30' });
 
                     expect(highlightRangeSpy.calledOnce).toEqual(true);
-                    expect(highlightRangeSpy.args[0][0].toString()).toEqual(moment.utc([2012,11,25]).toString());
-                    expect(highlightRangeSpy.args[0][1].toString()).toEqual(moment.utc([2012,11,30]).toString());
+                    expect(highlightRangeSpy.args[0][0].toString()).toEqual(moment.tz([2012,11,25], timezone).toString());
+                    expect(highlightRangeSpy.args[0][1].toString()).toEqual(moment.tz([2012,11,30], timezone).toString());
                 });
 
                 it('triggers a startDateSelected event when the startCalendar date changes', function(){
@@ -728,7 +733,7 @@ define([
                     picker.startCalendar.$el.find('.day[data-date="2012-12-01"]').click();
 
                     expect(spy.calledOnce).toEqual(true);
-                    expect(spy.args[0][0].startDate.toString()).toEqual(moment.utc([2012,11,1]).toString());
+                    expect(spy.args[0][0].startDate.toString()).toEqual(moment.tz([2012,11,1], timezone).toString());
                 });
 
                 it('triggers a endDateSelected event when the endCalendar date changes', function(){
@@ -739,7 +744,7 @@ define([
                     picker.endCalendar.$el.find('.day[data-date="2012-12-30"]').click();
 
                     expect(spy.calledOnce).toEqual(true);
-                    expect(spy.args[0][0].endDate.toString()).toEqual(moment.utc([2012,11,30]).toString());
+                    expect(spy.args[0][0].endDate.toString()).toEqual(moment.tz([2012,11,30], timezone).toString());
                 });
 
                 it('triggers endDateSelected with corrected date when end date before start date', function(){
@@ -750,8 +755,8 @@ define([
                     picker.endCalendar.$el.find('.day[data-date="2012-12-20"]').click();
 
                     expect(spy.calledOnce).toEqual(true);
-                    expect(spy.args[0][0].startDate.toString()).toEqual(moment.utc([2012,11,20]).toString());
-                    expect(spy.args[0][0].endDate.toString()).toEqual(moment.utc([2012,11,20]).toString());
+                    expect(spy.args[0][0].startDate.toString()).toEqual(moment.tz([2012,11,20], timezone).toString());
+                    expect(spy.args[0][0].endDate.toString()).toEqual(moment.tz([2012,11,20], timezone).toString());
                 });
 
                 it('triggers startDateSelected with corrected date when start date after end date', function(){
@@ -764,8 +769,8 @@ define([
                     picker.startCalendar.$el.find('.day[data-date="2012-12-31"]').click();
 
                     expect(spy.calledOnce).toEqual(true);
-                    expect(spy.args[0][0].startDate.toString()).toEqual(moment.utc([2012,11,31]).toString());
-                    expect(spy.args[0][0].endDate.toString()).toEqual(moment.utc([2012,11,31]).toString());
+                    expect(spy.args[0][0].startDate.toString()).toEqual(moment.tz([2012,11,31], timezone).toString());
+                    expect(spy.args[0][0].endDate.toString()).toEqual(moment.tz([2012,11,31], timezone).toString());
                 });
 
                 it('does not trigger onDateSelected on the other calendar when fixing start date', function(){
@@ -807,7 +812,8 @@ define([
                     picker = daterangepicker.create({
                         $input: $testInput,
                         startDate: '2012-12-01',
-                        endDate: '2012-12-31'
+                        endDate: '2012-12-31',
+                        timezone: timezone
                     });
                     picker.render();
 
@@ -816,8 +822,8 @@ define([
                 });
 
                 it('calls this.startCalendar.highlightCells with the correct dates', function(){
-                    var startDate = moment.utc([2012,11,1]),
-                        endDate = moment.utc([2012,11,31]);
+                    var startDate = moment.tz([2012,11,1], timezone),
+                        endDate = moment.tz([2012,11,31], timezone);
 
                     picker._highlightRange(startDate, endDate);
 
@@ -827,8 +833,8 @@ define([
                 });
 
                 it('calls this.endCalendar.highlightCells with the correct dates', function(){
-                    var startDate = moment.utc([2012,11,1]),
-                        endDate = moment.utc([2012,11,31]);
+                    var startDate = moment.tz([2012,11,1], timezone),
+                        endDate = moment.tz([2012,11,31], timezone);
 
                     picker._highlightRange(startDate, endDate);
 
@@ -838,8 +844,8 @@ define([
                 });
 
                 it('does not call either calendar\'s highlight cells method if an invalid date range is used', function(){
-                    var startDate = moment.utc([2012,11,31]),
-                        endDate = moment.utc([2012,11,1]);
+                    var startDate = moment.tz([2012,11,31], timezone),
+                        endDate = moment.tz([2012,11,1], timezone);
 
                     picker._highlightRange(startDate, endDate);
 
@@ -850,8 +856,8 @@ define([
 
             describe('presets', function(){
                 beforeEach(function(){
-                    var christmas2012Str = moment.utc([2012,11,25]).format('YYYY-MM-DD'),
-                        nye2012Str = moment.utc([2012,11,31]).format('YYYY-MM-DD');
+                    var christmas2012Str = moment.tz([2012,11,25], timezone).format('YYYY-MM-DD'),
+                        nye2012Str = moment.tz([2012,11,31], timezone).format('YYYY-MM-DD');
 
                     picker = daterangepicker.create({
                         $input: $testInput,
@@ -865,7 +871,8 @@ define([
                                 endDate: nye2012Str,
                                 specifyTime: true
                             }
-                        }
+                        },
+                        timezone: timezone
                     });
 
                     picker.render();
@@ -886,7 +893,7 @@ define([
                 });
 
                 it('selects the corresponding date range when a preset is clicked', function(){
-                    var christmas2012 = moment.utc([2012,11,25]);
+                    var christmas2012 = moment.tz([2012,11,25], timezone);
 
                     picker.$el.find('.presets li').eq(0).click();
 
@@ -896,7 +903,7 @@ define([
 
                 it('triggers a presetSelected event when a preset is chosen', function(){
                     var spy = sinon.spy(),
-                        christmas2012 = moment.utc([2012,11,25]);
+                        christmas2012 = moment.tz([2012,11,25], timezone);
 
                     picker.bind('presetSelected', spy);
 
@@ -911,8 +918,8 @@ define([
 
         describe('as a jquery plugin', function(){
             var input,
-                christmas2012Str = moment.utc([2012,11,25]).format('YYYY-MM-DD'),
-                nye2012Str = moment.utc([2012,11,31]).format('YYYY-MM-DD');
+                christmas2012Str = moment.tz([2012,11,25], timezone).format('YYYY-MM-DD'),
+                nye2012Str = moment.tz([2012,11,31], timezone).format('YYYY-MM-DD');
 
             beforeEach(function(){
                 input = $('<input id="pickerInput"/>');
@@ -931,7 +938,8 @@ define([
                             startDate: nye2012Str,
                             endDate: nye2012Str
                         }
-                    }
+                    },
+                    timezone: timezone
                 });
             });
 
@@ -968,8 +976,8 @@ define([
 
                 var picker = input.data('picker');
 
-                expect(picker.startCalendar.selectedDate.toString()).toEqual(moment.utc([2013,0,1]).toString());
-                expect(picker.endCalendar.selectedDate.toString()).toEqual(moment.utc([2013,1,14]).toString());
+                expect(picker.startCalendar.selectedDate.toString()).toEqual(moment.tz([2013,0,1], timezone).toString());
+                expect(picker.endCalendar.selectedDate.toString()).toEqual(moment.tz([2013,1,14], timezone).toString());
             });
 
             it('shows the picker when the target element is clicked', function(){
@@ -1042,8 +1050,8 @@ define([
                 var picker = input.data('picker');
 
                 picker.trigger('refresh', {
-                    startDate: moment([2014, 10, 12]),
-                    endDate: moment([2014, 11, 12])
+                    startDate: moment.tz([2014, 10, 12], timezone),
+                    endDate: moment.tz([2014, 11, 12], timezone)
                 });
 
                 expect(input.val()).toEqual('12 Nov 2014 - 12 Dec 2014');
