@@ -10,10 +10,10 @@ define([
     'use strict';
 
     describe('daterangepicker', function(){
-        var picker,
-            christmas2012Str = moment.utc([2012,11,25]).format('YYYY-MM-DD'),
-            nye2012Str = moment.utc([2012,11,31]).format('YYYY-MM-DD');
-
+        var picker;
+        var christmas2012Str = moment.utc([2012,11,25]).format('YYYY-MM-DD');
+        var nye2012Str = moment.utc([2012,11,31]).format('YYYY-MM-DD');
+        var $testInput = $('<input type="text">');
 
         afterEach(function(){
             if(picker){
@@ -26,7 +26,9 @@ define([
             var calendar;
 
             beforeEach(function(){
-                picker = daterangepicker.create();
+                picker = daterangepicker.create({
+                    $input: $testInput
+                });
                 calendar = picker._createCalendar({
                     selectedDate: '2012-12-25',
                     className: 'myCalendar'
@@ -115,6 +117,7 @@ define([
 
                 it('renders the close button when presets specified', function(){
                     picker = daterangepicker.create({
+                        $input: $testInput,
                         presets: {
                             'christmas 2012': {
                                 startDate: christmas2012Str
@@ -130,6 +133,7 @@ define([
 
                 it('renders the close button with custom css class', function(){
                     picker = daterangepicker.create({
+                        $input: $testInput,
                         presets: {
                             'christmas 2012': {
                                 startDate: christmas2012Str
@@ -145,7 +149,9 @@ define([
                 });
 
                 it('triggers an "onRendered" event on the daterangepicker', function() {
-                    picker = daterangepicker.create();
+                    picker = daterangepicker.create({
+                        $input: $testInput
+                    });
 
                     sinon.spy(picker, 'trigger');
 
@@ -226,6 +232,7 @@ define([
                 it('closes the picker when clicking close button', function(){
                     var hideSpy;
                     picker = daterangepicker.create({
+                        $input: $testInput,
                         presets: {
                             'christmas 2012': {
                                 startDate: christmas2012Str
@@ -314,6 +321,7 @@ define([
                 describe('defaults', function(){
                     beforeEach(function(){
                         picker = daterangepicker.create({
+                            $input: $testInput,
                             singleDate: true
                         });
                     });
@@ -337,6 +345,7 @@ define([
                 describe('custom date supplied in options', function(){
                     beforeEach(function(){
                         picker = daterangepicker.create({
+                            $input: $testInput,
                             startDate: '2013-01-01',
                             singleDate: true
                         });
@@ -366,6 +375,7 @@ define([
                         };
 
                         picker = daterangepicker.create({
+                            $input: $testInput,
                             presets: presets,
                             singleDate: true
                         });
@@ -380,6 +390,7 @@ define([
 
                 beforeEach(function(){
                     picker = daterangepicker.create({
+                        $input: $testInput,
                         singleDate: true
                     });
 
@@ -409,6 +420,7 @@ define([
             describe('events', function(){
                 beforeEach(function(){
                     picker = daterangepicker.create({
+                        $input: $testInput,
                         startDate: '2012-12-25',
                         singleDate: true
                     });
@@ -440,6 +452,7 @@ define([
             describe('presets', function(){
                 beforeEach(function(){
                     picker = daterangepicker.create({
+                        $input: $testInput,
                         presets: {
                             'christmas 2012': {
                                 startDate: christmas2012Str
@@ -525,7 +538,9 @@ define([
 
                 describe('defaults', function(){
                     beforeEach(function(){
-                        picker = daterangepicker.create();
+                        picker = daterangepicker.create({
+                            $input: $testInput
+                        });
                     });
 
                     it('creates a calendar for the current month as this.startCalendar', function(){
@@ -562,6 +577,7 @@ define([
                 describe('custom range supplied in options', function(){
                     beforeEach(function(){
                         picker = daterangepicker.create({
+                            $input: $testInput,
                             startDate: '2013-01-01',
                             endDate: '2013-02-14'
                         });
@@ -604,6 +620,7 @@ define([
                         };
 
                         picker = daterangepicker.create({
+                            $input: $testInput,
                             presets: presets
                         });
 
@@ -618,6 +635,7 @@ define([
 
                 beforeEach(function(){
                     picker = daterangepicker.create({
+                        $input: $testInput,
                         doneButtonCssClass: 'customDoneButtonCss'
                     });
 
@@ -663,6 +681,7 @@ define([
             describe('events', function(){
                 beforeEach(function(){
                     picker = daterangepicker.create({
+                        $input: $testInput,
                         startDate: '2012-12-25',
                         endDate: '2012-12-31'
                     });
@@ -786,6 +805,7 @@ define([
 
                 beforeEach(function(){
                     picker = daterangepicker.create({
+                        $input: $testInput,
                         startDate: '2012-12-01',
                         endDate: '2012-12-31'
                     });
@@ -834,6 +854,7 @@ define([
                         nye2012Str = moment.utc([2012,11,31]).format('YYYY-MM-DD');
 
                     picker = daterangepicker.create({
+                        $input: $testInput,
                         presets: {
                             'christmas 2012': {
                                 startDate: christmas2012Str,
@@ -915,7 +936,12 @@ define([
             });
 
             afterEach(function(){
-                input.data('picker').destroy();
+                var picker = input.data('picker');
+
+                if (picker) {
+                    picker.destroy();
+                }
+
                 $('#testArea').empty();
             });
 
@@ -927,6 +953,14 @@ define([
                 var picker = input.data('picker');
 
                 expect(picker.$input.data('picker')).toEqual(input.data('picker'));
+            });
+
+            it('removes the reference to the target element when destroyed', function() {
+                var picker = input.data('picker');
+
+                picker.destroy();
+
+                expect(input.data('picker')).not.toBeDefined();
             });
 
             it('passes supplied options through to the picker', function(){
@@ -1025,6 +1059,7 @@ define([
                 TestPlugin.prototype.attach = sinon.spy();
 
                 picker = daterangepicker.create({
+                    $input: $testInput,
                     plugins: [TestPlugin],
                     testPlugin: {
                         property1: true
@@ -1038,7 +1073,9 @@ define([
             });
 
             it('can add plugins', function(){
-                picker = daterangepicker.create();
+                picker = daterangepicker.create({
+                    $input: $testInput
+                });
 
                 function TestPlugin(options){
                     this.options = options;
@@ -1059,6 +1096,7 @@ define([
                     detachSpy = sinon.spy();
 
                 picker = daterangepicker.create({
+                    $input: $testInput,
                     plugins: [
                         _.extend(function TestPlugin(){
                             return {attach: attachSpy, detach: detachSpy};
