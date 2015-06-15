@@ -342,6 +342,10 @@ define([
                         expect(picker.startCalendar.selectedDate.month()).toEqual(now.month());
                         expect(picker.startCalendar.selectedDate.date()).toEqual(now.date());
                     });
+
+                    it('parses dates in UTC if a timezone is not supplied', function(){
+                        expect(picker.timezone).toEqual('UTC');
+                    });
                 });
 
                 describe('custom date supplied in options', function(){
@@ -575,6 +579,10 @@ define([
                         expect(picker.endCalendar.selectedDate.year()).toEqual(now.year());
                         expect(picker.endCalendar.selectedDate.month()).toEqual(now.month());
                         expect(picker.endCalendar.selectedDate.date()).toEqual(now.date());
+                    });
+
+                    it('parses dates in UTC if a timezone is not supplied', function(){
+                        expect(picker.timezone).toEqual('UTC');
                     });
                 });
 
