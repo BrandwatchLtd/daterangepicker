@@ -12,8 +12,9 @@ define([
     'use strict';
 
     describe('time support plugin', function() {
-        var picker,
-            sandbox;
+        var picker;
+        var sandbox;
+        var $testInput = $('<input type="text">');
 
         beforeEach(function() {
             sandbox = sinon.sandbox.create();
@@ -32,6 +33,7 @@ define([
             it('throws if used on a "single date" picker', function() {
                 expect(function(){
                     daterangepicker.create({
+                        $input: $testInput,
                         singleDate: true,
                         plugins: [timesupport]
                     });
@@ -42,6 +44,7 @@ define([
         describe('when attached', function() {
             beforeEach(function() {
                 picker = daterangepicker.create({
+                    $input: $testInput,
                     plugins: [timesupport]
                 });
 
@@ -66,10 +69,11 @@ define([
             });
 
             describe('when a timezone is provided', function(){
-                var timezone = moment().format('UTCZ');
+                var timezone = moment.tz.names()[0];
 
                 beforeEach(function() {
                     picker = daterangepicker.create({
+                        $input: $testInput,
                         timezone: timezone,
                         plugins: [timesupport]
                     });
@@ -86,13 +90,20 @@ define([
 
         describe('plugin options', function() {
             describe('when specifyTimeChecked is true', function() {
+                var timezone = 'Europe/Helsinki';
+                var startDate;
+                var endDate;
+
                 beforeEach(function() {
-                    sandbox.useFakeTimers(Date.UTC(2013, 7, 1, 11, 0));
+                    startDate = moment.utc([2013, 7, 1, 11, 0]);
+                    endDate = moment.utc([2013, 7, 1, 11, 0]);
 
                     picker = daterangepicker.create({
-                        startDate: moment().utcOffset(120).toISOString(),
-                        endDate: moment().utcOffset(120).add({'h': 2}).toISOString(),
+                        $input: $testInput,
+                        startDate: startDate.toISOString(),
+                        endDate: endDate.toISOString(),
                         plugins: [timesupport],
+                        timezone: timezone,
                         timeSupport: {
                             specifyTimeChecked: true
                         }
@@ -109,15 +120,16 @@ define([
                     expect(picker.$el.find('.time-support__panel-wrapper').hasClass('isOpen')).toEqual(true);
                 });
 
-                it('populates the time fields with UTC time', function() {
-                    expect(picker.timeSupport.startPanel.$input.val()).toEqual('11:00');
-                    expect(picker.timeSupport.endPanel.$input.val()).toEqual('13:00');
+                it('populates the time fields with time in the timezone passed as parameter', function() {
+                    expect(picker.timeSupport.startPanel.$input.val()).toEqual(startDate.tz(timezone).format('HH:mm'));
+                    expect(picker.timeSupport.endPanel.$input.val()).toEqual(endDate.tz(timezone).format('HH:mm'));
                 });
             });
 
             describe('when specifyTimeChecked is false', function() {
                 beforeEach(function() {
                     picker = daterangepicker.create({
+                        $input: $testInput,
                         plugins: [timesupport],
                         timeSupport: {
                             specifyTimeChecked: false
@@ -139,6 +151,7 @@ define([
             describe('when specifyTimeChecked is undefined', function() {
                 beforeEach(function() {
                     picker = daterangepicker.create({
+                        $input: $testInput,
                         plugins: [timesupport]
                     });
 
@@ -181,6 +194,7 @@ define([
 
             beforeEach(function() {
                 picker = daterangepicker.create({
+                    $input: $testInput,
                     plugins: [timesupport]
                 });
             });
@@ -211,6 +225,7 @@ define([
 
             beforeEach(function() {
                 picker = daterangepicker.create({
+                    $input: $testInput,
                     plugins: [timesupport]
                 });
 
@@ -260,6 +275,7 @@ define([
 
             beforeEach(function() {
                 picker = daterangepicker.create({
+                    $input: $testInput,
                     plugins: [timesupport]
                 });
 
@@ -317,6 +333,7 @@ define([
 
             beforeEach(function() {
                 picker = daterangepicker.create({
+                    $input: $testInput,
                     plugins: [timesupport]
                 });
 
@@ -351,6 +368,7 @@ define([
 
             beforeEach(function() {
                 picker = daterangepicker.create({
+                    $input: $testInput,
                     plugins: [timesupport],
                     presets: {
                         'last hour': {
@@ -444,6 +462,7 @@ define([
         describe('when detached', function() {
             beforeEach(function() {
                 picker = daterangepicker.create({
+                    $input: $testInput,
                     plugins: [timesupport]
                 });
 
@@ -464,6 +483,7 @@ define([
         describe('updating the calendar date', function() {
             beforeEach(function() {
                 picker = daterangepicker.create({
+                    $input: $testInput,
                     plugins: [timesupport]
                 });
 
@@ -488,6 +508,7 @@ define([
 
             beforeEach(function () {
                 picker = daterangepicker.create({
+                    $input: $testInput,
                     plugins: [timesupport]
                 });
 
@@ -512,6 +533,7 @@ define([
         describe('closePanel', function () {
             beforeEach(function () {
                 picker = daterangepicker.create({
+                    $input: $testInput,
                     plugins: [timesupport]
                 });
 
