@@ -356,8 +356,8 @@ define([
             describe('setTimezone', function () {
                 it('changes the timezone displayed in the timepicker', function () {
                     expect(timeSupport.$timezoneSpan.text()).toEqual('(UTC)');
-                    timeSupport.setTimezone('Europe/Helsinki');
-                    expect(timeSupport.$timezoneSpan.text()).toEqual('(Europe/Helsinki)');
+                    timeSupport.setTimezone('America/Los_Angeles');
+                    expect(timeSupport.$timezoneSpan.text()).toEqual('(America/Los Angeles)');
                 });
             });
         });
