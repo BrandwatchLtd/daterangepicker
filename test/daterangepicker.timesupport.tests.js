@@ -68,8 +68,8 @@ define([
                 expect(picker.$el.find('.time-support__panel-wrapper .time-support__panel').length).toEqual(2);
             });
 
-            describe('when a timezone is provided', function(){
-                var timezone = moment.tz.names()[0];
+            describe('when a UTC-like timezone is provided', function() {
+                var timezone = 'Etc/UTC';
 
                 beforeEach(function() {
                     picker = daterangepicker.create({
@@ -83,7 +83,32 @@ define([
 
                 it('renders it inside a span', function() {
                     expect(picker.$el.find('.time-support__zone').length).toEqual(1);
-                    expect(picker.$el.find('.time-support__zone').text()).toEqual('(' + timezone + ')');
+                    expect(picker.$el.find('.time-support__zone').text()).toEqual('(UTC)');
+                });
+            });
+
+            describe('when a not-UTC timezone is provided', function(){
+                var timezone = 'Europe/Helsinki';
+                var clock;
+
+                beforeEach(function() {
+                    clock = sandbox.useFakeTimers(new Date('2015-01-01T00:00:00.000Z').getTime());
+                    picker = daterangepicker.create({
+                        $input: $testInput,
+                        timezone: timezone,
+                        plugins: [timesupport]
+                    });
+
+                    picker.render();
+                });
+
+                afterEach(function() {
+                    clock.restore();
+                });
+
+                it('renders its UTC offset inside a span', function() {
+                    expect(picker.$el.find('.time-support__zone').length).toEqual(1);
+                    expect(picker.$el.find('.time-support__zone').text()).toEqual('(UTC+02:00)');
                 });
             });
         });
@@ -354,10 +379,20 @@ define([
             });
 
             describe('setTimezone', function () {
-                it('changes the timezone displayed in the timepicker', function () {
+                var clock;
+
+                beforeEach(function() {
+                    clock = sandbox.useFakeTimers(new Date('2015-01-01T00:00:00.000Z').getTime());
+                });
+
+                afterEach(function() {
+                    clock.restore();
+                });
+
+                it('changes the timezone\'s offset displayed in the timepicker', function () {
                     expect(timeSupport.$timezoneSpan.text()).toEqual('(UTC)');
                     timeSupport.setTimezone('America/Los_Angeles');
-                    expect(timeSupport.$timezoneSpan.text()).toEqual('(America/Los Angeles)');
+                    expect(timeSupport.$timezoneSpan.text()).toEqual('(UTC-08:00)');
                 });
             });
         });
