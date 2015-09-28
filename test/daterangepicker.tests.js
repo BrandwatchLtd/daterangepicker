@@ -690,6 +690,38 @@ define([
                 });
             });
 
+            describe('showing the picker', function() {
+                var startCalendarRenderSpy,
+                    endCalendarRenderSpy,
+                    showStub;
+
+                beforeEach(function(){
+                    picker = daterangepicker.create({
+                        $input: $testInput,
+                        doneButtonCssClass: 'customDoneButtonCss'
+                    });
+
+                    startCalendarRenderSpy = sinon.spy(picker.startCalendar, 'render');
+                    endCalendarRenderSpy = sinon.spy(picker.endCalendar, 'render');
+
+                    picker.render();
+
+                    showStub = sinon.stub(picker.$el, 'show');
+                });
+
+                afterEach(function(){
+                    startCalendarRenderSpy.restore();
+                    endCalendarRenderSpy.restore();
+                    showStub.restore();
+                });
+
+                it('triggers an "onBeforeShown" event', function(){
+                    picker.show($('body'));
+
+                    expect(showStub.calledOnce).toEqual(true);
+                });
+            });
+
             describe('events', function(){
                 beforeEach(function(){
                     picker = daterangepicker.create({
