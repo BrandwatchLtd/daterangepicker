@@ -186,9 +186,9 @@ define([
 
                     previousMonthDate.click();
 
+                    expect(calendar.monthToDisplay.year()).toEqual(2012);
+                    expect(calendar.monthToDisplay.month()).toEqual(11);
                     expect(showMonthSpy.calledOnce).toEqual(true);
-                    expect(showMonthSpy.args[0][0]).toEqual(2012);
-                    expect(showMonthSpy.args[0][1]).toEqual(10);
                 });
 
                 it('updates this.selectedDate when a day is clicked', function(){
@@ -258,16 +258,10 @@ define([
                     calendar.render();
                 });
 
-                it('updates this.monthToDisplay', function(){
-                    calendar.showMonth(2010,0);
-
-                    expect(calendar.monthToDisplay.toString()).toEqual(moment.tz([2010,0], timezone).toString());
-                });
-
                 it('re-renders', function(){
                     var renderSpy = sinon.spy(calendar, 'render');
 
-                    calendar.showMonth(2010,0);
+                    calendar.showMonth();
 
                     expect(renderSpy.calledOnce).toEqual(true);
                 });
