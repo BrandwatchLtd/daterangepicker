@@ -9,7 +9,7 @@
   ],
   "dependencies": {
     "timepicker": "git://github.com/BrandwatchLtd/timepicker.git#~0.2.0",
-    "jquery": "~3.0.0",
+    "jquery": "~3.1.0",
     "underscore": "~1.8.3",
     "moment": "~2.10.3",
     "moment-timezone": "~0.3.1"
