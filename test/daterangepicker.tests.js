@@ -10,17 +10,23 @@ define([
     'use strict';
 
     describe('daterangepicker', function(){
+        var sandbox;
         var picker;
         var timezone = 'Australia/Canberra';
         var christmas2012Str = moment.tz([2012,11,25], timezone).format('YYYY-MM-DD');
         var nye2012Str = moment.tz([2012,11,31], timezone).format('YYYY-MM-DD');
         var $testInput = $('<input type="text">');
 
+        beforeEach(function () {
+            sandbox = sinon.sandbox.create();
+        });
+
         afterEach(function(){
             if(picker){
                 picker.destroy();
                 picker = undefined;
             }
+            sandbox.restore();
         });
 
         describe('a datepicker calendar', function(){
@@ -155,7 +161,7 @@ define([
                         $input: $testInput
                     });
 
-                    sinon.spy(picker, 'trigger');
+                    sandbox.spy(picker, 'trigger');
 
                     picker.render();
 
@@ -182,13 +188,13 @@ define([
 
                 it('updates the month if the date clicked is not on this.monthToDisplay', function(){
                     var previousMonthDate = calendar.$el.find('.day[data-date="2012-11-30"]'),
-                        showMonthSpy = sinon.spy(calendar, 'showMonth');
+                        showMonthSpy = sandbox.spy(calendar, 'showMonth');
 
                     previousMonthDate.click();
 
                     expect(showMonthSpy.calledOnce).toEqual(true);
                     expect(calendar.monthToDisplay.year()).toEqual(2012);
-                    expect(calendar.monthToDisplay.month()).toEqual(11);
+                    expect(calendar.monthToDisplay.month()).toEqual(10);
                 });
 
                 it('updates this.selectedDate when a day is clicked', function(){
@@ -209,7 +215,7 @@ define([
                 });
 
                 it('re-renders when next is clicked', function(){
-                    var renderStub = sinon.stub(calendar, 'render');
+                    var renderStub = sandbox.stub(calendar, 'render');
 
                     calendar.$el.find('.next').click();
 
@@ -224,7 +230,7 @@ define([
                 });
 
                 it('re-renders when previous is clicked', function(){
-                    var renderStub = sinon.stub(calendar, 'render');
+                    var renderStub = sandbox.stub(calendar, 'render');
 
                     calendar.$el.find('.prev').click();
 
@@ -246,7 +252,7 @@ define([
                     });
                     picker.render();
 
-                    hideSpy = sinon.spy(picker, 'hide');
+                    hideSpy = sandbox.spy(picker, 'hide');
                     picker.$el.find('.close a').click();
 
                     expect(hideSpy.calledOnce).toEqual(true);
@@ -254,17 +260,45 @@ define([
             });
 
             describe('showing a month', function(){
+                var calendar;
+                var expectedDate;
+                var renderSpy;
+                var triggerSpy;
+
                 beforeEach(function(){
-                    calendar.render();
+                    renderSpy = sandbox.spy(calendar, 'render');
+                    triggerSpy = sandbox.spy(calnder, 'trigger');
+                    expectedDate = moment.tz([2012,11,25], timezone);
+                    calendar = picker._createCalendar({
+                        selectedDate: expectedDate.format('YYYY-MM-DD'),
+                        className: 'myCalendar',
+                        timezone: timezone
+                    });
                 });
 
                 it('re-renders', function(){
-                    var renderSpy = sinon.spy(calendar, 'render');
+                    var renderSpy = sandbox.spy(calendar, 'render');
 
                     calendar.showMonth();
 
                     expect(renderSpy.calledOnce).toEqual(true);
+                    expect(triggerSpy.calledOnce).toEqual(true);
                 });
+
+                it('does not update this.monthToShow with no argument passed in', function() {
+                    calendar.showMonth();
+
+                    expect(renderSpy.calledOnce).toEqual(true);
+                    expect(triggerSpy.calledOnce).toEqual(true);
+                    expect(calendar.monthToDisplay.month()).toEqual(expectedDate.month());
+                });
+
+                it('updates this.monthToShow with the argument passed in', function() {
+                    expectedDate = moment.tz([2012,9,15], timezone).format('YYYY-MM-DD');
+                    calendar.showMonth(expectedDate);
+
+                    expect(calendar.monthToDisplay.month()).toEqual(expectedDate.month());
+                })
             });
 
             describe('highlighting cells', function(){
@@ -394,7 +428,7 @@ define([
                         singleDate: true
                     });
 
-                    startCalendarRenderSpy = sinon.spy(picker.startCalendar, 'render');
+                    startCalendarRenderSpy = sandbox.spy(picker.startCalendar, 'render');
 
                     picker.render();
                 });
@@ -429,7 +463,7 @@ define([
                 });
 
                 it('calls this.highlightRange when the startCalendar raises an onDateSelected event', function(){
-                    var highlightRangeSpy = sinon.spy(picker, '_highlightRange');
+                    var highlightRangeSpy = sandbox.spy(picker, '_highlightRange');
 
                     picker.startCalendar.trigger('onDateSelected', { date: '2012-12-01' });
 
@@ -439,7 +473,7 @@ define([
                 });
 
                 it('triggers a startDateSelected event when the startCalendar date changes', function(){
-                    var spy = sinon.spy();
+                    var spy = sandbox.spy();
 
                     picker.bind('startDateSelected', spy);
 
@@ -492,7 +526,7 @@ define([
                 });
 
                 it('triggers a presetSelected event when a preset is chosen', function(){
-                    var spy = sinon.spy(),
+                    var spy = sandbox.spy(),
                         christmas2012 = moment.tz([2012,11,25], timezone);
 
                     picker.bind('presetSelected', spy);
@@ -505,7 +539,7 @@ define([
                 });
 
                 it('passes specifyTime as true if set to true on the preset', function() {
-                    var spy = sinon.spy(),
+                    var spy = sandbox.spy(),
                         nye2012Str = moment.tz([2012,11,31], timezone);
 
                     picker.bind('presetSelected', spy);
@@ -519,7 +553,7 @@ define([
                 });
 
                 it('passes specifyTime as false if set to false on the preset', function() {
-                    var spy = sinon.spy(),
+                    var spy = sandbox.spy(),
                         christmas2012 = moment.tz([2012,11,25], timezone);
 
                     picker.bind('presetSelected', spy);
@@ -645,8 +679,8 @@ define([
                         doneButtonCssClass: 'customDoneButtonCss'
                     });
 
-                    startCalendarRenderSpy = sinon.spy(picker.startCalendar, 'render');
-                    endCalendarRenderSpy = sinon.spy(picker.endCalendar, 'render');
+                    startCalendarRenderSpy = sandbox.spy(picker.startCalendar, 'render');
+                    endCalendarRenderSpy = sandbox.spy(picker.endCalendar, 'render');
 
                     picker.render();
                 });
@@ -695,12 +729,12 @@ define([
                         doneButtonCssClass: 'customDoneButtonCss'
                     });
 
-                    startCalendarRenderSpy = sinon.spy(picker.startCalendar, 'render');
-                    endCalendarRenderSpy = sinon.spy(picker.endCalendar, 'render');
+                    startCalendarRenderSpy = sandbox.spy(picker.startCalendar, 'render');
+                    endCalendarRenderSpy = sandbox.spy(picker.endCalendar, 'render');
 
                     picker.render();
 
-                    showStub = sinon.stub(picker.$el, 'show');
+                    showStub = sandbox.stub(picker.$el, 'show');
                 });
 
                 afterEach(function(){
@@ -740,7 +774,7 @@ define([
                 });
 
                 it('calls this.highlightRange when the startCalendar raises an onDateSelected event', function(){
-                    var highlightRangeSpy = sinon.spy(picker, '_highlightRange');
+                    var highlightRangeSpy = sandbox.spy(picker, '_highlightRange');
 
                     picker.startCalendar.trigger('onDateSelected', { date: '2012-12-01' });
 
@@ -750,7 +784,7 @@ define([
                 });
 
                 it('calls this.highlightRange when the endCalendar raises an onDateSelected event', function(){
-                    var highlightRangeSpy = sinon.spy(picker, '_highlightRange');
+                    var highlightRangeSpy = sandbox.spy(picker, '_highlightRange');
 
                     picker.endCalendar.trigger('onDateSelected', { date: '2012-12-30' });
 
@@ -760,7 +794,7 @@ define([
                 });
 
                 it('triggers a startDateSelected event when the startCalendar date changes', function(){
-                    var spy = sinon.spy();
+                    var spy = sandbox.spy();
 
                     picker.bind('startDateSelected', spy);
 
@@ -771,7 +805,7 @@ define([
                 });
 
                 it('triggers a endDateSelected event when the endCalendar date changes', function(){
-                    var spy = sinon.spy();
+                    var spy = sandbox.spy();
 
                     picker.bind('endDateSelected', spy);
 
@@ -782,7 +816,7 @@ define([
                 });
 
                 it('triggers endDateSelected with corrected date when end date before start date', function(){
-                    var spy = sinon.spy();
+                    var spy = sandbox.spy();
 
                     picker.bind('endDateSelected', spy);
 
@@ -794,7 +828,7 @@ define([
                 });
 
                 it('triggers startDateSelected with corrected date when start date after end date', function(){
-                    var spy = sinon.spy();
+                    var spy = sandbox.spy();
 
                     picker.endCalendar.$el.find('.day[data-date="2012-12-30"]').click();
 
@@ -808,7 +842,7 @@ define([
                 });
 
                 it('does not trigger onDateSelected on the other calendar when fixing start date', function(){
-                    var dateSelectedEventStub = sinon.stub();
+                    var dateSelectedEventStub = sandbox.stub();
 
                     picker.startCalendar.$el.find('.day[data-date="2012-12-31"]').click();
 
@@ -820,7 +854,7 @@ define([
                 });
 
                 it('does not trigger onDateSelected on the other calendar when fixing end date', function(){
-                    var dateSelectedEventStub = sinon.stub();
+                    var dateSelectedEventStub = sandbox.stub();
 
                     picker.endCalendar.$el.find('.day[data-date="2012-12-30"]').click();
 
@@ -832,7 +866,7 @@ define([
                 });
 
                 it('hides picker when done button is clicked', function(){
-                    var hideSpy = sinon.spy(picker, 'hide');
+                    var hideSpy = sandbox.spy(picker, 'hide');
                     picker.$el.find('button.done').click();
                     expect(hideSpy.calledOnce).toEqual(true);
                 });
@@ -851,8 +885,8 @@ define([
                     });
                     picker.render();
 
-                    startCalendarHighlightCellsSpy = sinon.spy(picker.startCalendar, 'highlightCells');
-                    endCalendarHighlightCellsSpy = sinon.spy(picker.endCalendar, 'highlightCells');
+                    startCalendarHighlightCellsSpy = sandbox.spy(picker.startCalendar, 'highlightCells');
+                    endCalendarHighlightCellsSpy = sandbox.spy(picker.endCalendar, 'highlightCells');
                 });
 
                 it('calls this.startCalendar.highlightCells with the correct dates', function(){
@@ -936,7 +970,7 @@ define([
                 });
 
                 it('triggers a presetSelected event when a preset is chosen', function(){
-                    var spy = sinon.spy(),
+                    var spy = sandbox.spy(),
                         christmas2012 = moment.tz([2012,11,25], timezone);
 
                     picker.bind('presetSelected', spy);
@@ -1015,7 +1049,7 @@ define([
             });
 
             it('shows the picker when the target element is clicked', function(){
-                var showStub = sinon.stub(daterangepicker.prototype, 'show');
+                var showStub = sandbox.stub(daterangepicker.prototype, 'show');
 
                 input.click();
 
@@ -1025,8 +1059,8 @@ define([
             });
 
             it('shows the picker with a custom z-index', function(){
-                var jqShowStub = sinon.stub($.prototype, 'show', function(){ return this; }),
-                    jqCssStub = sinon.stub($.prototype, 'css', function(){ return this; });
+                var jqShowStub = sandbox.stub($.prototype, 'show', function(){ return this; }),
+                    jqCssStub = sandbox.stub($.prototype, 'css', function(){ return this; });
 
                 input.click();
 
@@ -1040,7 +1074,7 @@ define([
             });
 
             it('hides the picker when a click occurs outside the picker area', function(){
-                var hideStub = sinon.stub(daterangepicker.prototype, 'hide');
+                var hideStub = sandbox.stub(daterangepicker.prototype, 'hide');
 
                 input.click();
                 $('body').click();
@@ -1098,7 +1132,7 @@ define([
                     this.options = options;
                 }
                 TestPlugin.pluginName = 'testPlugin';
-                TestPlugin.prototype.attach = sinon.spy();
+                TestPlugin.prototype.attach = sandbox.spy();
 
                 picker = daterangepicker.create({
                     $input: $testInput,
@@ -1123,7 +1157,7 @@ define([
                     this.options = options;
                 }
                 TestPlugin.pluginName = 'testPlugin';
-                TestPlugin.prototype.attach = sinon.spy();
+                TestPlugin.prototype.attach = sandbox.spy();
 
                 picker.addPlugin(TestPlugin, {config: 'value'});
 
@@ -1134,8 +1168,8 @@ define([
             });
 
             it('properly disposes of plugins on destroy', function(){
-                var attachSpy = sinon.spy(),
-                    detachSpy = sinon.spy();
+                var attachSpy = sandbox.spy(),
+                    detachSpy = sandbox.spy();
 
                 picker = daterangepicker.create({
                     $input: $testInput,
