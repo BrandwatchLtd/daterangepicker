@@ -12,7 +12,7 @@ Pull down the repo then execute:
 
     npm start
 
-and open `http://localhost:8080/demo`
+and open `http://localhost:9009/demo`
 
 
 Running the tests
@@ -31,4 +31,4 @@ To run tests in the browser:
 
     npm start
 
-and open `http://localhost:8080/test`
+and open `http://localhost:9009/test`
