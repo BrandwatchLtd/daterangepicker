@@ -35,7 +35,9 @@
                 todayStr = today.format('YYYY-MM-DD'),
                 yesterday = today.clone().subtract('days', 1),
                 yesterdayStr = yesterday.format('YYYY-MM-DD'),
-                sevenDaysAgoStr = today.clone().subtract('days', 6).format('YYYY-MM-DD');
+                sevenDaysAgoStr = today.clone().subtract('days', 6).format('YYYY-MM-DD'),
+                thirtyDaysAgoStr = today.clone().subtract('days', 29).format('YYYY-MM-DD'),
+                sixtyDaysAgoStr = today.clone().subtract('days', 59).format('YYYY-MM-DD');
         </script>
     </head>
     <body>
@@ -190,6 +192,14 @@
                             },
                             'last seven days': {
                                 startDate: sevenDaysAgoStr,
+                                endDate: todayStr
+                            },
+                            '30 days ago': {
+                                startDate: thirtyDaysAgoStr,
+                                endDate: todayStr
+                            },
+                            '60 days ago': {
+                                startDate: sixtyDaysAgoStr,
                                 endDate: todayStr
                             }
                         }
