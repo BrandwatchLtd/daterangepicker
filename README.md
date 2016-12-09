@@ -32,3 +32,8 @@ To run tests in the browser:
     npm start
 
 and open `http://localhost:8080/test`
+
+Versioning
+==========
+
+Versioning is done through `npm` by running `npm version [<newversion> | major | minor | patch]`. For documentation visit [npm](https://docs.npmjs.com/cli/version).
