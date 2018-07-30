@@ -17,7 +17,7 @@ define([
         var $testInput = $('<input type="text">');
 
         beforeEach(function() {
-            sandbox = sinon.sandbox.create();
+            sandbox = sinon.createSandbox();
         });
 
         afterEach(function() {

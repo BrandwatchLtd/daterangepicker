@@ -20,12 +20,12 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "sinon": "~1.17.4",
-    "mocha": "~2.5.3",
+    "bower": "^1.8.4",
+    "mocha": "^5.2.0",
     "phantomjs-prebuilt": "~2.1.7",
-    "serve": "~1.4.0",
-    "testem": "~1.9.0",
-    "bower": "~1.7.9"
+    "serve": "^9.4.0",
+    "sinon": "^6.1.4",
+    "testem": "^2.9.0"
   },
   "optionalDependencies": {},
   "volo": {

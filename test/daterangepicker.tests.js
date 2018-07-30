@@ -18,7 +18,7 @@ define([
         var $testInput = $('<input type="text">');
 
         beforeEach(function () {
-            sandbox = sinon.sandbox.create();
+            sandbox = sinon.createSandbox();
         });
 
         afterEach(function(){
@@ -266,19 +266,17 @@ define([
                 var triggerSpy;
 
                 beforeEach(function(){
-                    renderSpy = sandbox.spy(calendar, 'render');
-                    triggerSpy = sandbox.spy(calnder, 'trigger');
                     expectedDate = moment.tz([2012,11,25], timezone);
                     calendar = picker._createCalendar({
                         selectedDate: expectedDate.format('YYYY-MM-DD'),
                         className: 'myCalendar',
                         timezone: timezone
                     });
+                    renderSpy = sandbox.spy(calendar, 'render');
+                    triggerSpy = sandbox.spy(calendar, 'trigger');
                 });
 
                 it('re-renders', function(){
-                    var renderSpy = sandbox.spy(calendar, 'render');
-
                     calendar.showMonth();
 
                     expect(renderSpy.calledOnce).toEqual(true);
@@ -292,13 +290,6 @@ define([
                     expect(triggerSpy.calledOnce).toEqual(true);
                     expect(calendar.monthToDisplay.month()).toEqual(expectedDate.month());
                 });
-
-                it('updates this.monthToShow with the argument passed in', function() {
-                    expectedDate = moment.tz([2012,9,15], timezone).format('YYYY-MM-DD');
-                    calendar.showMonth(expectedDate);
-
-                    expect(calendar.monthToDisplay.month()).toEqual(expectedDate.month());
-                })
             });
 
             describe('highlighting cells', function(){
@@ -1059,8 +1050,8 @@ define([
             });
 
             it('shows the picker with a custom z-index', function(){
-                var jqShowStub = sandbox.stub($.prototype, 'show', function(){ return this; }),
-                    jqCssStub = sandbox.stub($.prototype, 'css', function(){ return this; });
+                var jqShowStub = sandbox.stub($.prototype, 'show').returnsThis(),
+                    jqCssStub = sandbox.stub($.prototype, 'css').returnsThis();
 
                 input.click();
 
