@@ -1,3 +1,5 @@
+🚨ARCHIVED PROJECT - This has now been moved to the [Analytics Frontend](https://github.com/BrandwatchLtd/frontend) repo [#10023](https://github.com/BrandwatchLtd/frontend/pull/10464) 🚨
+
 daterangepicker
 ===============
 
